@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -32,7 +31,7 @@
             {{-- School Logo and Brand --}}
 
             <a class="navbar-brand d-flex align-items-center gap-2"
-               href="/">
+                href="/">
 
                 <i class="bi bi-mortarboard-fill school-logo"></i>
 
@@ -85,13 +84,12 @@
                 {{-- Students --}}
 
                 <a
-                    href="#"
-                    class="top-menu-link">
+                    href="/students"
+                    class="top-menu-link {{ request()->is('students') ? 'active' : '' }}">
 
                     Students
 
                 </a>
-
 
                 {{-- Teachers --}}
 
@@ -175,13 +173,10 @@
                     <li class="nav-item">
 
                         <a
-                            href="#"
-                            class="nav-link">
-
+                            href="/students"
+                            class="nav-link {{ request()->is('students') ? 'active' : '' }}">
                             <i class="bi bi-people me-2"></i>
-
                             Students
-
                         </a>
 
                     </li>
@@ -221,7 +216,25 @@
 
         <main class="main-content">
 
+            @if (session('success'))
+
+            <div
+                id="success-message"
+                class="alert alert-success text-center mx-auto mt-3"
+                style="max-width: 500px;">
+                {{ session('success') }}
+            </div>
+
+            <script>
+                setTimeout(function() {
+                    document.getElementById('success-message').remove();
+                }, 3000);
+            </script>
+
+            @endif
+
             @yield('content')
+
 
         </main>
 
@@ -233,4 +246,3 @@
 </body>
 
 </html>
-

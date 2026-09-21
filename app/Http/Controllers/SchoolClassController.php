@@ -9,7 +9,32 @@ class SchoolClassController extends Controller
 {
     public function index()
     {
-        $classes = SchoolClass::all();
+        $classes = SchoolClass::withCount('students')->get();
         return view('classes.index',compact('classes'));
+    }
+     
+
+    public function create(){
+            return view('classes.create');
+    }
+    public function show(SchoolClass $class){
+        return view('classes.show',compact('class'));
+
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name'=>'required|string|max:100',
+            'section'=>'required|string|max:50',
+            'description'=>'nullable|string',
+        ]);
+        SchoolClass::create([
+            'name'=>$request->name,
+            'section'=>$request->section,
+            'description'=>$request->description,
+
+        ]);
+        return redirect('/classes')->with('success','Class created successfully.');
     }
 }
