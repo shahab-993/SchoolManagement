@@ -1,83 +1,159 @@
 @extends('layouts.app')
 
-@section('title', 'Students')
+@section('title', 'Student Details')
 
 @section('content')
 
 <div class="container-fluid mt-4 px-4">
 
+
+{{-- Header --}}
 <div class="d-flex justify-content-between align-items-center mb-4">
 
-    <h1 class="mb-0">Students</h1>
+    <h1 class="mb-0">Student Details</h1>
 
-    <a href="/students/create" class="btn btn-primary-action">
-        <i class="bi bi-plus-lg me-1"></i>
-        Add Student
+    <a href="{{ route('students.index') }}" class="btn btn-secondary">
+        <i class="bi bi-arrow-left me-1"></i>
+        Back
     </a>
 
 </div>
 
-    @foreach ($students as $student)
+{{-- Student Details Card --}}
+<div class="card shadow-sm">
 
-    <div class="card mb-3">
+    <div class="card-body p-4">
 
-        <div class="card-body">
+        <div class="row">
 
-            <h5 class="card-title">
-                {{ $student->first_name }} {{ $student->last_name }}
-            </h5>
-            <p class="card-text">
-                Class: {{ $student->schoolClass->name }}
-            </p>
+            {{-- Student Information --}}
+            <div class="col-lg-8">
 
-            <p class="card-text">
-                Section: {{ $student->schoolClass->section }}
-            </p>
-            <p class="card-text">
-                Admission No: {{ $student->admission_no }}
-            </p>
+                <h4 class="mb-4">
+                    {{ $student->first_name }}
+                    {{ $student->last_name }}
+                </h4>
 
-            <p class="card-text">
-                Father Name: {{ $student->father_name }}
-            </p>
+                <div class="row">
 
-            <p class="card-text">
-                Date of Birth: {{ $student->date_of_birth }}
-            </p>
+                    <div class="col-md-6 mb-3">
+                        <strong>Class:</strong>
+                        {{ $student->schoolClass->name }}
+                    </div>
 
-            <p class="card-text">
-                Gender: {{ $student->gender }}
-            </p>
+                    <div class="col-md-6 mb-3">
+                        <strong>Section:</strong>
+                        {{ $student->schoolClass->section }}
+                    </div>
 
-            <p class="card-text">
-                Phone: {{ $student->phone }}
-            </p>
+                    <div class="col-md-6 mb-3">
+                        <strong>Admission No:</strong>
+                        {{ $student->admission_no }}
+                    </div>
 
-            <p class="card-text">
-                Email: {{ $student->email }}
-            </p>
+                    <div class="col-md-6 mb-3">
+                        <strong>Father Name:</strong>
+                        {{ $student->father_name }}
+                    </div>
 
-            <p class="card-text">
-                Address: {{ $student->address }}
-            </p>
+                    <div class="col-md-6 mb-3">
+                        <strong>Date of Birth:</strong>
+                        {{ $student->date_of_birth }}
+                    </div>
 
-            <p class="card-text">
-                Admission Date: {{ $student->admission_date }}
-            </p>
+                    <div class="col-md-6 mb-3">
+                        <strong>Gender:</strong>
+                        {{ $student->gender }}
+                    </div>
 
-            <p class="card-text">
-                Status: {{ $student->status }}
-            </p>
+                    <div class="col-md-6 mb-3">
+                        <strong>Phone:</strong>
+                        {{ $student->phone }}
+                    </div>
 
-            <p class="card-text">
-                Notes: {{ $student->notes }}
-            </p>
+                    <div class="col-md-6 mb-3">
+                        <strong>Email:</strong>
+                        {{ $student->email }}
+                    </div>
+
+                    <div class="col-12 mb-3">
+                        <strong>Address:</strong>
+                        {{ $student->address }}
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <strong>Admission Date:</strong>
+                        {{ $student->admission_date }}
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+                        <strong>Status:</strong>
+
+                        @if ($student->status === 'active')
+                            <span class="badge bg-success">Active</span>
+                        @else
+                            <span class="badge bg-danger">Inactive</span>
+                        @endif
+
+                    </div>
+
+                    <div class="col-12">
+                        <strong>Notes:</strong>
+                        {{ $student->notes }}
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            {{-- Student Photo --}}
+            <div class="col-lg-4">
+
+                <div class="text-center">
+
+                    @if ($student->photo)
+
+                        <img
+                            src="{{ asset('storage/' . $student->photo) }}"
+                            alt="Student Photo"
+                            class="img-fluid shadow-sm"
+                            style="
+                                width: 260px;
+                                height: 320px;
+                                object-fit: cover;
+                                border-radius: 10px;
+                            "
+                        >
+
+                    @else
+
+                        <div
+                            class="d-flex align-items-center justify-content-center mx-auto bg-light text-muted"
+                            style="
+                                width: 260px;
+                                height: 320px;
+                                border-radius: 10px;
+                            "
+                        >
+                            <div>
+                                <i class="bi bi-person-fill fs-1"></i>
+                                <div>No Photo</div>
+                            </div>
+                        </div>
+
+                    @endif
+
+                </div>
+
+            </div>
 
         </div>
 
     </div>
 
-    @endforeach
+</div>
+
 
 </div>
 

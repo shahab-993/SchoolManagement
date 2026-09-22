@@ -55,7 +55,7 @@
                     <td>
 
                         {{ $class->name }}
-                       
+
                     </td>
 
 
@@ -63,10 +63,14 @@
                     <td>
 
                         {{ $class->section }}
-                    
+
                     </td>
 
-                    <td>{{ $class->students_count }}</td>
+                    <td>
+                        <a href="/classes/{{ $class->id }}/students">
+                            {{ $class->students_count }}
+                        </a>
+                    </td>
                     {{-- Description --}}
                     <td>
                         {{ $class->description }}
@@ -85,9 +89,8 @@
                         </a>
 
 
-                        {{-- Edit --}}
                         <a
-                            href="#"
+                            href="{{ route('classes.edit', $class->id) }}"
                             class="btn btn-sm btn-warning"
                             title="Edit Class">
                             <i class="bi bi-pencil"></i>
@@ -95,12 +98,20 @@
 
 
                         {{-- Delete --}}
-                        <button
-                            type="button"
-                            class="btn btn-sm btn-danger"
-                            title="Delete Class">
-                            <i class="bi bi-trash"></i>
-                        </button>
+                        <form
+                            action="{{ route('classes.destroy', $class->id) }}"
+                            method="POST"
+                            class="d-inline">
+                            @csrf
+                            @method('DELETE')
+
+                            <button
+                                type="submit"
+                                class="btn btn-sm btn-danger"
+                                title="Delete Class">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </form>
 
                     </td>
 

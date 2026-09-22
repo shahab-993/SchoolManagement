@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Students')
+@section('title', 'Class Students')
 
 @section('content')
 
@@ -9,11 +9,19 @@
     {{-- Page Header --}}
     <div class="d-flex justify-content-between align-items-center mb-4">
 
-        <h1 class="mb-0">Students</h1>
+        <div>
+            <h1 class="mb-1">
+                {{ $class->name }} - {{ $class->section }}
+            </h1>
 
-        <a href="/students/create" class="btn btn-primary-action">
-            <i class="bi bi-plus-lg me-1"></i>
-            Add Student
+            <p class="text-muted mb-0">
+                Students in this class
+            </p>
+        </div>
+
+        <a href="/classes" class="btn btn-secondary">
+            <i class="bi bi-arrow-left me-1"></i>
+            Back
         </a>
 
     </div>
@@ -31,8 +39,6 @@
                     <th>Admission No</th>
                     <th>Name</th>
                     <th>Father Name</th>
-                    <th>Class</th>
-                    <th>Section</th>
                     <th>Phone</th>
                     <th>Status</th>
                     <th>Actions</th>
@@ -40,57 +46,33 @@
 
             </thead>
 
-
             <tbody>
 
                 @foreach ($students as $student)
 
                 <tr>
 
-                    {{-- Number --}}
                     <td>
                         {{ $loop->iteration }}
                     </td>
 
-
-                    {{-- Admission Number --}}
                     <td>
                         {{ $student->admission_no }}
                     </td>
 
-
-                    {{-- Student Name --}}
                     <td>
                         {{ $student->first_name }}
                         {{ $student->last_name }}
                     </td>
 
-
-                    {{-- Father Name --}}
                     <td>
                         {{ $student->father_name }}
                     </td>
 
-
-                    {{-- Class --}}
-                    <td>
-                        {{ $student->schoolClass->name }}
-                    </td>
-
-
-                    {{-- Section --}}
-                    <td>
-                        {{ $student->schoolClass->section }}
-                    </td>
-
-
-                    {{-- Phone --}}
                     <td>
                         {{ $student->phone }}
                     </td>
 
-
-                    {{-- Status --}}
                     <td>
 
                         @if ($student->status === 'active')
@@ -109,7 +91,6 @@
 
                     </td>
 
-                    {{-- Actions --}}
                     <td>
 
                         {{-- View --}}
@@ -120,20 +101,22 @@
                             <i class="bi bi-eye"></i>
                         </a>
 
-
                         {{-- Edit --}}
                         <a
-                            href="{{ route('students.edit', $student->id)  }}"
+                            href="/students/{{ $student->id }}/edit"
                             class="btn btn-sm btn-warning"
                             title="Edit Student">
                             <i class="bi bi-pencil"></i>
                         </a>
 
-
                         {{-- Delete --}}
-                        <form action="{{ route('students.destroy', $student->id) }}"  method="POST" class="d-inline">
+                        <form
+                            action="/students/{{ $student->id }}"
+                            method="POST"
+                            class="d-inline">
                             @csrf
                             @method('DELETE')
+
                             <button
                                 type="submit"
                                 class="btn btn-sm btn-danger"
@@ -141,7 +124,9 @@
                                 <i class="bi bi-trash"></i>
                             </button>
                         </form>
+
                     </td>
+                 
 
                 </tr>
 

@@ -90,12 +90,11 @@
                     Students
 
                 </a>
-
                 {{-- Teachers --}}
 
                 <a
-                    href="#"
-                    class="top-menu-link">
+                    href="{{ route('teachers.index') }}"
+                    class="top-menu-link {{ request()->is('teachers') ? 'active' : '' }}">
 
                     Teachers
 
@@ -188,7 +187,7 @@
                     <li class="nav-item">
 
                         <a
-                            href="#"
+                            href="{{ route('teachers.index') }}"
                             class="nav-link">
 
                             <i class="bi bi-person-workspace me-2"></i>
@@ -220,8 +219,17 @@
 
             <div
                 id="success-message"
-                class="alert alert-success text-center mx-auto mt-3"
-                style="max-width: 500px;">
+                class="alert alert-success text-center"
+                style="
+            position: fixed;
+            top: 70px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 500px;
+            max-width: 90%;
+            padding: 6px 15px;
+            z-index: 9999;
+        ">
                 {{ session('success') }}
             </div>
 
