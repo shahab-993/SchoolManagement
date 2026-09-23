@@ -3,6 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\SchoolClassController;
 use App\Http\Controllers\StudentController;
+use App\Http\Controllers\SubjectController;
 use App\Http\Controllers\TeacherController;
 use Illuminate\Support\Facades\Route;
 
@@ -34,4 +35,34 @@ Route::delete('/students/{student}', [StudentController::class, 'destroy'])->nam
 
 Route::get('/teachers', [TeacherController::class, 'index'])->name('teachers.index');
 Route::get('/teachers/create', [TeacherController::class, 'create'])->name('teachers.create');
+Route::post('/teachers', [TeacherController::class, 'store'])
+    ->name('teachers.store');
+Route::get('/teachers/{teacher}/edit', [TeacherController::class, 'edit'])
+    ->name('teachers.edit');
+    Route::put('/teachers/{teacher}', [TeacherController::class, 'update'])
+    ->name('teachers.update');
+Route::get('/teachers/{teacher}',[TeacherController::class,'show'])->name('teachers.show');
+Route::delete('/teachers/{teacher}',[TeacherController::class,'destroy'])->name('teachers.destroy');
 
+
+
+Route::get('/subjects', [SubjectController::class, 'index'])
+    ->name('subjects.index');
+
+Route::get('/subjects/create', [SubjectController::class, 'create'])
+    ->name('subjects.create');
+
+Route::post('/subjects', [SubjectController::class, 'store'])
+    ->name('subjects.store');
+
+Route::get('/subjects/{subject}', [SubjectController::class, 'show'])
+    ->name('subjects.show');
+
+Route::get('/subjects/{subject}/edit', [SubjectController::class, 'edit'])
+    ->name('subjects.edit');
+
+Route::put('/subjects/{subject}', [SubjectController::class, 'update'])
+    ->name('subjects.update');
+
+Route::delete('/subjects/{subject}', [SubjectController::class, 'destroy'])
+    ->name('subjects.destroy');

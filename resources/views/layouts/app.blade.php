@@ -23,14 +23,15 @@
          Top Bar
     ========================== --}}
 
-    <nav class="navbar navbar-expand-lg top-bar">
+    <nav class="navbar top-bar">
 
         <div class="container-fluid px-4">
 
 
             {{-- School Logo and Brand --}}
 
-            <a class="navbar-brand d-flex align-items-center gap-2"
+            <a
+                class="navbar-brand d-flex align-items-center gap-2"
                 href="/">
 
                 <i class="bi bi-mortarboard-fill school-logo"></i>
@@ -45,11 +46,11 @@
             {{-- Mobile Sidebar Button --}}
 
             <button
-                class="navbar-toggler"
                 type="button"
-                id="sidebarToggle">
+                id="sidebarToggle"
+                class="btn sidebar-toggle">
 
-                <span class="navbar-toggler-icon"></span>
+                <i class="bi bi-list"></i>
 
             </button>
 
@@ -73,8 +74,8 @@
                 {{-- Classes --}}
 
                 <a
-                    href="/classes"
-                    class="top-menu-link {{ request()->is('classes') ? 'active' : '' }}">
+                    href="{{ route('classes.index') }}"
+                    class="top-menu-link {{ request()->is('classes*') ? 'active' : '' }}">
 
                     Classes
 
@@ -84,19 +85,32 @@
                 {{-- Students --}}
 
                 <a
-                    href="/students"
-                    class="top-menu-link {{ request()->is('students') ? 'active' : '' }}">
+                    href="{{ route('students.index') }}"
+                    class="top-menu-link {{ request()->is('students*') ? 'active' : '' }}">
 
                     Students
 
                 </a>
+
+
                 {{-- Teachers --}}
 
                 <a
                     href="{{ route('teachers.index') }}"
-                    class="top-menu-link {{ request()->is('teachers') ? 'active' : '' }}">
+                    class="top-menu-link {{ request()->is('teachers*') ? 'active' : '' }}">
 
                     Teachers
+
+                </a>
+
+
+                {{-- Subjects --}}
+
+                <a
+                    href="{{ route('subjects.index') }}"
+                    class="top-menu-link {{ request()->is('subjects*') ? 'active' : '' }}">
+
+                    Subjects
 
                 </a>
 
@@ -120,13 +134,12 @@
              Sidebar
         ========================== --}}
 
-        <div
+        <aside
             id="sidebar"
             class="sidebar">
 
 
             <div class="p-3">
-
 
                 <ul class="nav flex-column">
 
@@ -154,8 +167,8 @@
                     <li class="nav-item">
 
                         <a
-                            href="/classes"
-                            class="nav-link {{ request()->is('classes') ? 'active' : '' }}">
+                            href="{{ route('classes.index') }}"
+                            class="nav-link {{ request()->is('classes*') ? 'active' : '' }}">
 
                             <i class="bi bi-building me-2"></i>
 
@@ -172,10 +185,13 @@
                     <li class="nav-item">
 
                         <a
-                            href="/students"
-                            class="nav-link {{ request()->is('students') ? 'active' : '' }}">
+                            href="{{ route('students.index') }}"
+                            class="nav-link {{ request()->is('students*') ? 'active' : '' }}">
+
                             <i class="bi bi-people me-2"></i>
+
                             Students
+
                         </a>
 
                     </li>
@@ -188,7 +204,7 @@
 
                         <a
                             href="{{ route('teachers.index') }}"
-                            class="nav-link">
+                            class="nav-link {{ request()->is('teachers*') ? 'active' : '' }}">
 
                             <i class="bi bi-person-workspace me-2"></i>
 
@@ -199,13 +215,30 @@
                     </li>
 
 
-                </ul>
 
+                    {{-- Subjects --}}
+
+                    <li class="nav-item">
+
+                        <a
+                            href="{{ route('subjects.index') }}"
+                            class="nav-link {{ request()->is('subjects*') ? 'active' : '' }}">
+
+                            <i class="bi bi-book me-2"></i>
+
+                            Subjects
+
+                        </a>
+
+                    </li>
+
+
+                </ul>
 
             </div>
 
 
-        </div>
+        </aside>
 
 
 
@@ -215,31 +248,38 @@
 
         <main class="main-content">
 
+
+            {{-- Success Message --}}
+
             @if (session('success'))
 
-            <div
-                id="success-message"
-                class="alert alert-success text-center"
-                style="
-            position: fixed;
-            top: 70px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 500px;
-            max-width: 90%;
-            padding: 6px 15px;
-            z-index: 9999;
-        ">
-                {{ session('success') }}
-            </div>
+                <div
+                    id="success-message"
+                    class="alert alert-success text-center success-message">
 
-            <script>
-                setTimeout(function() {
-                    document.getElementById('success-message').remove();
-                }, 3000);
-            </script>
+                    {{ session('success') }}
+
+                </div>
+
+                <script>
+
+                    setTimeout(function () {
+
+                        const message =
+                            document.getElementById('success-message');
+
+                        if (message) {
+                            message.remove();
+                        }
+
+                    }, 3000);
+
+                </script>
 
             @endif
+
+
+            {{-- Page Content --}}
 
             @yield('content')
 

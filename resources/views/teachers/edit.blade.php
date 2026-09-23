@@ -1,19 +1,20 @@
 @extends('layouts.app')
 
-@section('title', 'Add Teacher')
+@section('title', 'Edit Teacher')
 
 @section('content')
 
 <div class="container-fluid mt-4 px-4">
 
-    <h1 class="mb-4">Add Teacher</h1>
+    <h1 class="mb-4">Edit Teacher</h1>
 
     <form
-        action="{{ route('teachers.store') }}"
+        action="{{ route('teachers.update', $teacher->id) }}"
         method="POST"
         enctype="multipart/form-data">
 
         @csrf
+        @method('PUT')
 
         <div class="row">
 
@@ -23,7 +24,8 @@
                 <input
                     type="text"
                     name="first_name"
-                    class="form-control">
+                    class="form-control"
+                    value="{{ $teacher->first_name }}">
             </div>
 
             {{-- Last Name --}}
@@ -32,7 +34,8 @@
                 <input
                     type="text"
                     name="last_name"
-                    class="form-control">
+                    class="form-control"
+                    value="{{ $teacher->last_name }}">
             </div>
 
             {{-- Father Name --}}
@@ -41,7 +44,8 @@
                 <input
                     type="text"
                     name="father_name"
-                    class="form-control">
+                    class="form-control"
+                    value="{{ $teacher->father_name }}">
             </div>
 
             {{-- Education --}}
@@ -51,7 +55,7 @@
                     type="text"
                     name="education"
                     class="form-control"
-                    placeholder="Bachelor / Master / PhD">
+                    value="{{ $teacher->education }}">
             </div>
 
             {{-- Education Field --}}
@@ -61,7 +65,7 @@
                     type="text"
                     name="education_field"
                     class="form-control"
-                    placeholder="Computer Science">
+                    value="{{ $teacher->education_field }}">
             </div>
 
             <div class="col-md-6 mb-3">
@@ -75,7 +79,9 @@
 
                     @foreach ($subjects as $subject)
 
-                    <option value="{{ $subject->id }}">
+                    <option
+                        value="{{ $subject->id }}"
+                        {{ $teacher->subjects->contains($subject->id) ? 'selected' : '' }}>
                         {{ $subject->name }} - {{ $subject->code }}
                     </option>
 
@@ -95,7 +101,8 @@
                 <input
                     type="date"
                     name="date_of_birth"
-                    class="form-control">
+                    class="form-control"
+                    value="{{ $teacher->date_of_birth }}">
             </div>
 
             {{-- Gender --}}
@@ -103,9 +110,17 @@
                 <label class="form-label">Gender</label>
 
                 <select name="gender" class="form-select">
-                    <option value="">Select Gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
+
+                    <option value="Male"
+                        {{ $teacher->gender == 'Male' ? 'selected' : '' }}>
+                        Male
+                    </option>
+
+                    <option value="Female"
+                        {{ $teacher->gender == 'Female' ? 'selected' : '' }}>
+                        Female
+                    </option>
+
                 </select>
             </div>
 
@@ -115,7 +130,8 @@
                 <input
                     type="text"
                     name="phone"
-                    class="form-control">
+                    class="form-control"
+                    value="{{ $teacher->phone }}">
             </div>
 
             {{-- Email --}}
@@ -124,7 +140,8 @@
                 <input
                     type="email"
                     name="email"
-                    class="form-control">
+                    class="form-control"
+                    value="{{ $teacher->email }}">
             </div>
 
             {{-- Joining Date --}}
@@ -133,7 +150,8 @@
                 <input
                     type="date"
                     name="joining_date"
-                    class="form-control">
+                    class="form-control"
+                    value="{{ $teacher->joining_date }}">
             </div>
 
             {{-- Status --}}
@@ -141,8 +159,17 @@
                 <label class="form-label">Status</label>
 
                 <select name="status" class="form-select">
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
+
+                    <option value="active"
+                        {{ $teacher->status == 'active' ? 'selected' : '' }}>
+                        Active
+                    </option>
+
+                    <option value="inactive"
+                        {{ $teacher->status == 'inactive' ? 'selected' : '' }}>
+                        Inactive
+                    </option>
+
                 </select>
             </div>
 
@@ -163,7 +190,7 @@
                 <textarea
                     name="address"
                     class="form-control"
-                    rows="3"></textarea>
+                    rows="3">{{ $teacher->address }}</textarea>
             </div>
 
             {{-- Notes --}}
@@ -173,14 +200,14 @@
                 <textarea
                     name="notes"
                     class="form-control"
-                    rows="3"></textarea>
+                    rows="3">{{ $teacher->notes }}</textarea>
             </div>
 
         </div>
 
         <button type="submit" class="btn btn-primary-action">
             <i class="bi bi-save me-1"></i>
-            Save Teacher
+            Update Teacher
         </button>
 
         <a

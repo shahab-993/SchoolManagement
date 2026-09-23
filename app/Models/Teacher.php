@@ -23,4 +23,13 @@ class Teacher extends Model
         'status',
         'notes',
     ];
+      public function subjects()
+{
+    return $this->belongsToMany(
+        Subject::class,
+        'subject_teacher',
+        'teacher_id',
+        'subject_id'
+    );
+}
 }

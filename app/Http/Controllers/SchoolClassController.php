@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\SchoolClass;
+use App\Models\Subject;
 use Illuminate\Http\Request;
 
 class SchoolClassController extends Controller
@@ -10,63 +11,90 @@ class SchoolClassController extends Controller
     public function index()
     {
         $classes = SchoolClass::withCount('students')->get();
-        return view('classes.index',compact('classes'));
-    }
-     
 
-    public function create(){
-            return view('classes.create');
+        return view('classes.index', compact('classes'));
     }
-    public function show(SchoolClass $class){
-        return view('classes.show',compact('class'));
 
+    public function create()
+    {
+        $subjects = Subject::all();
+
+        return view('classes.create', compact('subjects'));
     }
+
+public function show(SchoolClass $class)
+{
+    $class->load('subjects');
+
+    return view('classes.show', compact('class'));
+}
 
     public function store(Request $request)
     {
         $request->validate([
-            'name'=>'required|string|max:100',
-            'section'=>'required|string|max:50',
-            'description'=>'nullable|string',
+            'name' => 'required|string|max:100',
+            'section' => 'required|string|max:50',
+            'description' => 'nullable|string',
+            'subjects' => 'nullable|array',
+            'subjects.*' => 'exists:subjects,id',
         ]);
-        SchoolClass::create([
-            'name'=>$request->name,
-            'section'=>$request->section,
-            'description'=>$request->description,
 
+        $class = SchoolClass::create([
+            'name' => $request->name,
+            'section' => $request->section,
+            'description' => $request->description,
         ]);
-        return redirect('/classes')->with('success','Class created successfully.');
+
+        $class->subjects()->sync($request->subjects ?? []);
+
+        return redirect()
+            ->route('classes.index')
+            ->with('success', 'Class created successfully.');
     }
 
     public function students(SchoolClass $class)
     {
-        $students =$class->students;
-        return view('classes.students',compact('class','students'));
+        $students = $class->students;
+
+        return view('classes.students', compact('class', 'students'));
     }
 
     public function edit(SchoolClass $class)
     {
-        return view('classes.edit', compact('class'));
+        $subjects = Subject::all();
+
+        return view('classes.edit', compact('class', 'subjects'));
     }
-     public function update(Request $request, SchoolClass $class)
-     {
+
+    public function update(Request $request, SchoolClass $class)
+    {
         $request->validate([
-            'name'=>'required|string|max:100',
-            'section'=>'required|string|max:50',
-            'description'=>'nullable|string',
-
+            'name' => 'required|string|max:100',
+            'section' => 'required|string|max:50',
+            'description' => 'nullable|string',
+            'subjects' => 'nullable|array',
+            'subjects.*' => 'exists:subjects,id',
         ]);
+
         $class->update([
-            'name'=>$request->name,
-            'section'=>$request->section,
-            'description'=>$request->description,
+            'name' => $request->name,
+            'section' => $request->section,
+            'description' => $request->description,
         ]);
-        return redirect()->route('classes.index')->with('success','Class updated successfully!.');
-     }
+// dd($request->subjects);
+        $class->subjects()->sync($request->subjects ?? []);
 
-     public function destroy(SchoolClass $class){
+        return redirect()
+            ->route('classes.index')
+            ->with('success', 'Class updated successfully!');
+    }
+
+    public function destroy(SchoolClass $class)
+    {
         $class->delete();
-        return redirect()->route('classes.index')->with('success','Class deleted successfully!,');
 
-     }
+        return redirect()
+            ->route('classes.index')
+            ->with('success', 'Class deleted successfully!');
+    }
 }

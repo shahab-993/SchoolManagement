@@ -20,8 +20,7 @@
                 type="text"
                 name="name"
                 class="form-control"
-                value="{{ $class->name }}"
-            >
+                value="{{ $class->name }}">
         </div>
 
         <div class="mb-3">
@@ -31,18 +30,42 @@
                 type="text"
                 name="section"
                 class="form-control"
-                value="{{ $class->section }}"
-            >
+                value="{{ $class->section }}">
         </div>
+        <!-- subjects -->
+        <div class="mb-3">
 
+            <label class="form-label">Subjects</label>
+
+            <select
+                name="subjects[]"
+                class="form-select"
+                multiple>
+
+                @foreach ($subjects as $subject)
+
+                <option
+                    value="{{ $subject->id }}"
+                    {{ $class->subjects->contains($subject->id) ? 'selected' : '' }}>
+                    {{ $subject->name }} - {{ $subject->code }}
+                </option>
+
+                @endforeach
+
+            </select>
+
+            <small class="text-muted">
+                Hold Ctrl to select multiple subjects.
+            </small>
+
+        </div>
         <div class="mb-3">
             <label class="form-label">Description</label>
 
             <textarea
                 name="description"
                 class="form-control"
-                rows="3"
-            >{{ $class->description }}</textarea>
+                rows="3">{{ $class->description }}</textarea>
         </div>
 
         <button type="submit" class="btn btn-primary-action">
