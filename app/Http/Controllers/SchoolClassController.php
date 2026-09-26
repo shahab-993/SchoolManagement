@@ -8,11 +8,26 @@ use Illuminate\Http\Request;
 
 class SchoolClassController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $classes = SchoolClass::withCount('students')->get();
+        $query = $request->input('search');
 
-        return view('classes.index', compact('classes'));
+        $classes = SchoolClass::withCount('students')
+            ->when($query, function ($q) use ($query) {
+
+                $q->where(function ($q) use ($query) {
+
+                    $q->where('id', 'like', "%{$query}%")
+                        ->orWhere('name', 'like', "%{$query}%");
+                });
+            })
+            ->paginate(12)
+            ->withQueryString();
+
+        return view('classes.index', compact(
+            'classes',
+            'query'
+        ));
     }
 
     public function create()
@@ -22,12 +37,12 @@ class SchoolClassController extends Controller
         return view('classes.create', compact('subjects'));
     }
 
-public function show(SchoolClass $class)
-{
-    $class->load('subjects');
+    public function show(SchoolClass $class)
+    {
+        $class->load('subjects');
 
-    return view('classes.show', compact('class'));
-}
+        return view('classes.show', compact('class'));
+    }
 
     public function store(Request $request)
     {
@@ -81,7 +96,7 @@ public function show(SchoolClass $class)
             'section' => $request->section,
             'description' => $request->description,
         ]);
-// dd($request->subjects);
+        // dd($request->subjects);
         $class->subjects()->sync($request->subjects ?? []);
 
         return redirect()

@@ -66,3 +66,26 @@ Route::put('/subjects/{subject}', [SubjectController::class, 'update'])
 
 Route::delete('/subjects/{subject}', [SubjectController::class, 'destroy'])
     ->name('subjects.destroy');
+
+
+
+
+    use App\Http\Controllers\ClassSubjectTeacherController;
+
+Route::get('/assignments', [ClassSubjectTeacherController::class, 'index'])
+    ->name('assignments.index');
+
+Route::get('/assignments/create', [ClassSubjectTeacherController::class, 'create'])
+    ->name('assignments.create');
+
+Route::post('/assignments', [ClassSubjectTeacherController::class, 'store'])
+    ->name('assignments.store');
+    
+    Route::get('/assignments/{assignment}/edit', [ClassSubjectTeacherController::class, 'edit'])
+    ->name('assignments.edit');
+
+Route::put('/assignments/{assignment}', [ClassSubjectTeacherController::class, 'update'])
+    ->name('assignments.update');
+
+Route::delete('/assignments/{assignment}', [ClassSubjectTeacherController::class, 'destroy'])
+    ->name('assignments.destroy');

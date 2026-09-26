@@ -11,7 +11,24 @@
 
 
         <h1 class="mb-0">Classes</h1>
+        <div class="col-md-6 mb-4">
 
+            <div class="input-group">
+
+                <span class="input-group-text bg-white">
+                    <i class="bi bi-search"></i>
+                </span>
+
+                <input
+                    type="search"
+                    id="classSearch"
+                    class="form-control"
+                    placeholder="Search class by name or ID..."
+                    value="{{ $query ?? '' }}">
+
+            </div>
+
+        </div>
         <a href="/classes/create" class="btn btn-primary-action">
             <i class="bi bi-plus-lg me-1"></i>
             Add Class
@@ -23,7 +40,7 @@
     {{-- Classes Table --}}
     <div class="table-responsive">
 
-        <table class="table table-hover align-middle">
+        <table class="table table-hover align-middle" id="classesTable">
 
             <thead>
 
@@ -122,6 +139,9 @@
             </tbody>
 
         </table>
+        <div class="mt-4">
+            {{ $classes->links() }}
+        </div>
 
     </div>
 

@@ -33,30 +33,53 @@
                 value="{{ $class->section }}">
         </div>
         <!-- subjects -->
-        <div class="mb-3">
+        <div class="col-md-6 mb-3">
 
             <label class="form-label">Subjects</label>
 
-            <select
-                name="subjects[]"
-                class="form-select"
-                multiple>
+            <div class="subject-selector">
 
-                @foreach ($subjects as $subject)
+                {{-- Search --}}
+                <input
+                    type="text"
+                    id="subjectSearch"
+                    class="form-control mb-2"
+                    placeholder="Search subjects...">
 
-                <option
-                    value="{{ $subject->id }}"
-                    {{ $class->subjects->contains($subject->id) ? 'selected' : '' }}>
-                    {{ $subject->name }} - {{ $subject->code }}
-                </option>
+                {{-- Subjects --}}
+                <div
+                    id="subjectList"
+                    class="border rounded p-4"
+                    style="max-height: 250px; overflow-y: auto;">
 
-                @endforeach
+                    @foreach ($subjects as $subject)
 
-            </select>
+                    <div class="form-check subject-item">
 
-            <small class="text-muted">
-                Hold Ctrl to select multiple subjects.
-            </small>
+                        <input
+                            type="checkbox"
+                            name="subjects[]"
+                            value="{{ $subject->id }}"
+                            class="form-check-input subject-checkbox"
+                            id="subject{{ $subject->id }}"
+
+                            {{ $class->subjects->contains($subject->id) ? 'checked' : '' }}>
+
+                        <label
+                            class="form-check-label"
+                            for="subject{{ $subject->id }}">
+
+                            {{ $subject->name }} - {{ $subject->code }}
+
+                        </label>
+
+                    </div>
+
+                    @endforeach
+
+                </div>
+
+            </div>
 
         </div>
         <div class="mb-3">

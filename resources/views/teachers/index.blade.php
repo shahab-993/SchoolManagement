@@ -5,13 +5,31 @@
 <div class="container-fluid mt-4 px-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="mb-0">Teachers</h1>
+        <div class="col-md-6 mb-4">
+
+            <div class="input-group">
+
+                <span class="input-group-text bg-white">
+                    <i class="bi bi-search"></i>
+                </span>
+
+                <input
+                    type="search"
+                    id="teacherSearch"
+                    class="form-control"
+                    placeholder="Search teacher by ID or name..."
+                    value="{{ $query ?? '' }}">
+
+            </div>
+
+        </div>
         <a href="{{ route('teachers.create') }}" class="btn btn-primary-action">
             <i class="bi bi-plus-lg me-1"></i>
             Add Teacher
         </a>
     </div>
     <div class="table-responsive">
-        <table class="table table-hover align-middle">
+        <table id="teachersTable" class="table table-hover align-middle">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -97,6 +115,9 @@
 
             </tbody>
         </table>
+        <div class="mt-4">
+            {{ $teachers->links() }}
+        </div>
     </div>
 </div>
 

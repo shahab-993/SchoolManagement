@@ -8,14 +8,30 @@ use Illuminate\Http\Request;
 
 class TeacherController extends Controller
 {
-    public function index()
-    {
-        $teachers = Teacher::with('subjects')->get();
+   public function index(Request $request)
+{
+    $query = $request->input('search');
 
-        return view('teachers.index', compact('teachers'));
-    }
+    $teachers = Teacher::with('subjects')
+        ->when($query, function ($q) use ($query) {
 
-    public function create()
+            $q->where(function ($q) use ($query) {
+
+                $q->where('id', 'like', "%{$query}%")
+                    ->orWhere('first_name', 'like', "%{$query}%")
+                    ->orWhere('last_name', 'like', "%{$query}%");
+
+            });
+
+        })
+        ->paginate(12)
+        ->withQueryString();
+
+    return view('teachers.index', compact(
+        'teachers',
+        'query'
+    ));
+}    public function create()
     {
         $subjects = Subject::all();
 

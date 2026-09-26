@@ -10,6 +10,24 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
 
         <h1 class="mb-0">Students</h1>
+        <div class="col-md-6 mb-4">
+
+            <div class="input-group">
+
+                <span class="input-group-text bg-white">
+                    <i class="bi bi-search"></i>
+                </span>
+
+                <input
+                    type="search"
+                    id="studentSearch"
+                    class="form-control"
+                    placeholder="Search student by ID, admission no or name..."
+                    value="{{ $query ?? '' }}">
+
+            </div>
+
+        </div>
 
         <a href="/students/create" class="btn btn-primary-action">
             <i class="bi bi-plus-lg me-1"></i>
@@ -22,7 +40,7 @@
     {{-- Students Table --}}
     <div class="table-responsive">
 
-        <table class="table table-hover align-middle">
+        <table id="studentsTable" class="table table-hover align-middle">
 
             <thead>
 
@@ -131,7 +149,7 @@
 
 
                         {{-- Delete --}}
-                        <form action="{{ route('students.destroy', $student->id) }}"  method="POST" class="d-inline">
+                        <form action="{{ route('students.destroy', $student->id) }}" method="POST" class="d-inline">
                             @csrf
                             @method('DELETE')
                             <button
@@ -147,9 +165,13 @@
 
                 @endforeach
 
+
             </tbody>
 
         </table>
+        <div class="mt-4">
+            {{ $students->links() }}
+        </div>
 
     </div>
 

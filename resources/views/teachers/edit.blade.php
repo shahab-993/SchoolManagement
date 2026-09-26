@@ -67,33 +67,56 @@
                     class="form-control"
                     value="{{ $teacher->education_field }}">
             </div>
+<div class="col-md-6 mb-3">
 
-            <div class="col-md-6 mb-3">
+    <label class="form-label">Subjects</label>
 
-                <label class="form-label">Subjects</label>
+    <div class="subject-selector">
 
-                <select
-                    name="subjects[]"
-                    class="form-select"
-                    multiple>
+        {{-- Search --}}
+        <input
+            type="text"
+            id="subjectSearch"
+            class="form-control mb-2"
+            placeholder="Search subjects...">
 
-                    @foreach ($subjects as $subject)
+        {{-- Subjects --}}
+        <div
+            id="subjectList"
+            class="border rounded p-4"
+            style="max-height: 250px; overflow-y: auto;">
 
-                    <option
+            @foreach ($subjects as $subject)
+
+                <div class="form-check subject-item">
+
+                    <input
+                        type="checkbox"
+                        name="subjects[]"
                         value="{{ $subject->id }}"
-                        {{ $teacher->subjects->contains($subject->id) ? 'selected' : '' }}>
+                        class="form-check-input subject-checkbox"
+                        id="subject{{ $subject->id }}"
+
+                        {{ $teacher->subjects->contains($subject->id) ? 'checked' : '' }}
+                    >
+
+                    <label
+                        class="form-check-label"
+                        for="subject{{ $subject->id }}">
+
                         {{ $subject->name }} - {{ $subject->code }}
-                    </option>
 
-                    @endforeach
+                    </label>
 
-                </select>
+                </div>
 
-                <small class="text-muted">
-                    Hold Ctrl to select multiple subjects.
-                </small>
+            @endforeach
 
-            </div>
+        </div>
+
+    </div>
+
+</div>
 
             {{-- Date of Birth --}}
             <div class="col-md-6 mb-3">

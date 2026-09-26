@@ -9,6 +9,23 @@
     <div class="d-flex justify-content-between align-items-center mb-4">
 
         <h1 class="mb-0">Subjects</h1>
+        <div class="col-md-6 mb-4">
+
+            <div class="input-group">
+
+                <span class="input-group-text bg-white">
+                    <i class="bi bi-search"></i>
+                </span>
+
+                <input
+                    type="search"
+                    id="subjectListSearch"
+                    class="form-control"
+                    placeholder="Search subject by ID, name or code..."
+                    value="{{ $query ?? '' }}">
+            </div>
+
+        </div>
 
         <a href="{{ route('subjects.create') }}" class="btn btn-primary-action">
             <i class="bi bi-plus-lg me-1"></i>
@@ -19,7 +36,7 @@
 
     <div class="table-responsive">
 
-        <table class="table table-hover align-middle">
+        <table id="subjectsTable" class="table table-hover align-middle">
 
             <thead>
                 <tr>
@@ -48,9 +65,9 @@
 
                     <td>
                         @if ($subject->status === 'active')
-                            <span class="badge bg-success">Active</span>
+                        <span class="badge bg-success">Active</span>
                         @else
-                            <span class="badge bg-danger">Inactive</span>
+                        <span class="badge bg-danger">Inactive</span>
                         @endif
                     </td>
 
@@ -96,6 +113,9 @@
             </tbody>
 
         </table>
+        <div class="mt-4">
+            {{ $subjects->links() }}
+        </div>
 
     </div>
 

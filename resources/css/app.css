@@ -937,11 +937,381 @@
 
 
 /* =========================================================
+   SUBJECT & TEACHER DISTRIBUTION
+========================================================= */
+
+.subject-distribution {
+    margin-bottom: 35px;
+}
+
+
+.distribution-card {
+    background: #ffffff;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 18px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 6px 22px rgba(38, 59, 82, 0.07);
+}
+
+
+/* Header */
+
+.distribution-header {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 24px 26px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f8fafc,
+            #ffffff
+        );
+
+    border-bottom: 1px solid #e8edf2;
+}
+
+
+.distribution-label {
+    color: #8a98a8;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    letter-spacing: 1.2px;
+}
+
+
+.distribution-header h3 {
+    color: #263b52;
+
+    font-size: 22px;
+
+    font-weight: 700;
+
+    margin: 5px 0;
+}
+
+
+.distribution-header h3 i {
+    color: #3d6f9d;
+}
+
+
+.distribution-header p {
+    color: #7a8795;
+
+    font-size: 13px;
+
+    margin: 0;
+}
+
+
+.distribution-header-icon {
+    width: 52px;
+
+    height: 52px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 14px;
+
+    background: #e8f1fb;
+
+    color: #3d6f9d;
+
+    font-size: 23px;
+}
+
+
+/* Body */
+
+.distribution-body {
+    padding: 8px 26px;
+}
+
+
+/* Grade Row */
+
+.grade-row {
+    display: flex;
+
+    align-items: center;
+
+    gap: 25px;
+
+    padding: 18px 0;
+
+    border-bottom: 1px solid #edf1f5;
+}
+
+
+.grade-row:last-child {
+    border-bottom: none;
+}
+
+
+/* Grade */
+
+.grade-info {
+    width: 145px;
+
+    min-width: 145px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+}
+
+
+.grade-icon {
+    width: 43px;
+
+    height: 43px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 11px;
+
+    background: #eaf2fa;
+
+    color: #3d6f9d;
+
+    font-size: 13px;
+
+    font-weight: 700;
+}
+
+
+.grade-info strong {
+    display: block;
+
+    color: #344054;
+
+    font-size: 14px;
+
+    font-weight: 700;
+}
+
+
+.grade-info small {
+    display: block;
+
+    color: #98a2b3;
+
+    font-size: 11px;
+
+    margin-top: 2px;
+}
+
+
+/* Subjects */
+
+.subjects-container {
+    flex: 1;
+
+    display: flex;
+
+    flex-wrap: wrap;
+
+    gap: 10px;
+}
+
+
+.subject-item {
+    min-width: 145px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 9px;
+
+    padding: 8px 12px;
+
+    background: #f8fafc;
+
+    border: 1px solid #edf1f5;
+
+    border-radius: 9px;
+
+    transition: all 0.2s ease;
+}
+
+
+.subject-item:hover {
+    background: #f1f6fa;
+
+    border-color: #dce7f0;
+
+    transform: translateY(-2px);
+}
+
+
+.subject-item > i {
+    width: 30px;
+
+    height: 30px;
+
+    flex-shrink: 0;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 8px;
+
+    background: #e8f1fb;
+
+    color: #3d6f9d;
+
+    font-size: 13px;
+}
+
+
+.subject-item div {
+    min-width: 0;
+}
+
+
+.subject-item strong {
+    display: block;
+
+    color: #344054;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    white-space: nowrap;
+}
+
+
+.subject-item small {
+    display: block;
+
+    color: #98a2b3;
+
+    font-size: 10px;
+
+    margin-top: 2px;
+
+    white-space: nowrap;
+}
+
+
+/* Different icons */
+
+.subject-item:nth-child(2) > i {
+    background: #edf7f0;
+
+    color: #43845d;
+}
+
+
+.subject-item:nth-child(3) > i {
+    background: #f4eef9;
+
+    color: #76569a;
+}
+
+
+.subject-item:nth-child(4) > i {
+    background: #fff5df;
+
+    color: #a57920;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 991.98px) {
+
+    .grade-row {
+        align-items: flex-start;
+
+        flex-direction: column;
+
+        gap: 14px;
+    }
+
+    .grade-info {
+        width: 100%;
+    }
+
+    .subjects-container {
+        width: 100%;
+    }
+
+}
+
+
+@media (max-width: 767.98px) {
+
+    .distribution-header {
+        padding: 20px;
+    }
+
+    .distribution-header h3 {
+        font-size: 19px;
+    }
+
+    .distribution-header-icon {
+        display: none;
+    }
+
+    .distribution-body {
+        padding: 5px 18px;
+    }
+
+    .grade-row {
+        padding: 16px 0;
+    }
+
+    .subjects-container {
+        display: grid;
+
+        grid-template-columns: 1fr;
+    }
+
+    .subject-item {
+        width: 100%;
+    }
+
+}
+
+
+/* =========================================================
    DASHBOARD MOBILE
 ========================================================= */
 
 @media (max-width: 767.98px) {
-
 
     /* Dashboard */
 
@@ -1039,4 +1409,30 @@
         padding: 20px;
     }
 
+}
+
+
+/* =========================================================
+   MODERN PAGINATION
+========================================================= */
+
+.pagination {
+    margin-bottom: 0;
+}
+
+.pagination .page-link {
+    color: #526273;
+    border-color: #dce3ea;
+}
+
+.pagination .page-item.active .page-link {
+    background-color: #3d5f7e;
+    border-color: #3d5f7e;
+    color: #ffffff;
+}
+
+.pagination .page-link:hover {
+    background-color: #eef3f7;
+    border-color: #cbd6e0;
+    color: #263b52;
 }
