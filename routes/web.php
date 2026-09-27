@@ -1,6 +1,9 @@
 <?php
 
+use App\Http\Controllers\ClassSubjectTeacherController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MarkController;
+use App\Http\Controllers\ResultController;
 use App\Http\Controllers\SchoolClassController;
 use App\Http\Controllers\StudentController;
 use App\Http\Controllers\SubjectController;
@@ -21,6 +24,9 @@ Route::put('/classes/{class}', [SchoolClassController::class, 'update'])
     ->name('classes.update');
 Route::delete('/classes/{class}', [SchoolClassController::class, 'destroy'])->name('classes.destroy');
 
+
+
+
 Route::get('/students', [StudentController::class, 'index'])->name('students.index');
 Route::get('/students/create', [StudentController::class, 'create']);
 Route::get('/students/{student}', [StudentController::class, 'show']);
@@ -39,10 +45,10 @@ Route::post('/teachers', [TeacherController::class, 'store'])
     ->name('teachers.store');
 Route::get('/teachers/{teacher}/edit', [TeacherController::class, 'edit'])
     ->name('teachers.edit');
-    Route::put('/teachers/{teacher}', [TeacherController::class, 'update'])
+Route::put('/teachers/{teacher}', [TeacherController::class, 'update'])
     ->name('teachers.update');
-Route::get('/teachers/{teacher}',[TeacherController::class,'show'])->name('teachers.show');
-Route::delete('/teachers/{teacher}',[TeacherController::class,'destroy'])->name('teachers.destroy');
+Route::get('/teachers/{teacher}', [TeacherController::class, 'show'])->name('teachers.show');
+Route::delete('/teachers/{teacher}', [TeacherController::class, 'destroy'])->name('teachers.destroy');
 
 
 
@@ -70,7 +76,7 @@ Route::delete('/subjects/{subject}', [SubjectController::class, 'destroy'])
 
 
 
-    use App\Http\Controllers\ClassSubjectTeacherController;
+
 
 Route::get('/assignments', [ClassSubjectTeacherController::class, 'index'])
     ->name('assignments.index');
@@ -80,8 +86,8 @@ Route::get('/assignments/create', [ClassSubjectTeacherController::class, 'create
 
 Route::post('/assignments', [ClassSubjectTeacherController::class, 'store'])
     ->name('assignments.store');
-    
-    Route::get('/assignments/{assignment}/edit', [ClassSubjectTeacherController::class, 'edit'])
+
+Route::get('/assignments/{assignment}/edit', [ClassSubjectTeacherController::class, 'edit'])
     ->name('assignments.edit');
 
 Route::put('/assignments/{assignment}', [ClassSubjectTeacherController::class, 'update'])
@@ -89,3 +95,25 @@ Route::put('/assignments/{assignment}', [ClassSubjectTeacherController::class, '
 
 Route::delete('/assignments/{assignment}', [ClassSubjectTeacherController::class, 'destroy'])
     ->name('assignments.destroy');
+Route::get(
+    '/classes/{schoolClass}/subjects',
+    [ClassSubjectTeacherController::class, 'subjects']
+)->name('classes.subjects');
+
+
+
+Route::get(
+    '/classes/{schoolClass}/subjects/{subject}/marks',
+    [MarkController::class, 'index']
+)->name('marks.index');
+Route::post(
+    '/classes/{schoolClass}/subjects/{subject}/marks',
+    [MarkController::class, 'store']
+)->name('marks.store');
+
+
+
+Route::get(
+    '/classes/{schoolClass}/results',
+    [ResultController::class, 'index']
+)->name('results.index');

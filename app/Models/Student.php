@@ -26,5 +26,9 @@ protected $fillable = [
   public function schoolClass(){
     return $this->belongsTo(SchoolClass::class,'class_id');
   }
+  public function marks()
+{
+    return $this->hasMany(Mark::class);
+}
 
 }

@@ -97,37 +97,35 @@
                     {{-- Actions --}}
                     <td>
 
-                        {{-- View --}}
-                        <a
-                            href="/classes/{{ $class->id }}"
-                            class="btn btn-sm btn-info"
-                            title="View Class">
-                            <i class="bi bi-eye"></i>
+                        <a href="{{ route('classes.edit', $class->id) }}"
+                            class="btn btn-sm btn-warning">
+                            Edit
                         </a>
 
-
-                        <a
-                            href="{{ route('classes.edit', $class->id) }}"
-                            class="btn btn-sm btn-warning"
-                            title="Edit Class">
-                            <i class="bi bi-pencil"></i>
+                        <a href="{{ route('classes.subjects', $class->id) }}"
+                            class="btn btn-sm btn-primary">
+                            <i class="bi bi-pencil-square me-1"></i>
+                            Marks
                         </a>
 
+                        <a href="{{ route('results.index', $class->id) }}"
+                            class="btn btn-sm btn-primary">
+                            <i class="bi bi-bar-chart me-1"></i>
+                            Result
+                        </a>
 
-                        {{-- Delete --}}
-                        <form
-                            action="{{ route('classes.destroy', $class->id) }}"
+                        <form action="{{ route('classes.destroy', $class->id) }}"
                             method="POST"
                             class="d-inline">
+
                             @csrf
                             @method('DELETE')
 
-                            <button
-                                type="submit"
-                                class="btn btn-sm btn-danger"
-                                title="Delete Class">
-                                <i class="bi bi-trash"></i>
+                            <button type="submit"
+                                class="btn btn-sm btn-danger">
+                                Delete
                             </button>
+
                         </form>
 
                     </td>

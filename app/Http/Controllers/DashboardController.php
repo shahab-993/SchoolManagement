@@ -20,7 +20,7 @@ class DashboardController extends Controller
         $assignments = ClassSubjectTeacher::with([
             'schoolClass',
             'subject',
-            'teacher'
+        
         ])->get();
 
         return view('dashboard', compact(

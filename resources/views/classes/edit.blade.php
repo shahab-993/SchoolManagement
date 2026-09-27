@@ -6,101 +6,150 @@
 
 <div class="container-fluid mt-4 px-4">
 
-    <h1 class="mb-4">Edit Class</h1>
+```
+{{-- Page Header --}}
+<div class="d-flex justify-content-between align-items-center mb-4">
 
-    <form action="/classes/{{ $class->id }}" method="POST">
+    <div>
 
-        @csrf
-        @method('PUT')
+        <h1 class="mb-1">
+            Edit Class
+        </h1>
 
-        <div class="mb-3">
-            <label class="form-label">Class Name</label>
+        <p class="text-muted mb-0">
+            Update class information.
+        </p>
 
-            <input
-                type="text"
-                name="name"
-                class="form-control"
-                value="{{ $class->name }}">
-        </div>
+    </div>
 
-        <div class="mb-3">
-            <label class="form-label">Section</label>
+    <a href="{{ route('classes.index') }}"
+       class="btn btn-secondary">
 
-            <input
-                type="text"
-                name="section"
-                class="form-control"
-                value="{{ $class->section }}">
-        </div>
-        <!-- subjects -->
-        <div class="col-md-6 mb-3">
+        <i class="bi bi-arrow-left me-1"></i>
+        Back
 
-            <label class="form-label">Subjects</label>
+    </a>
 
-            <div class="subject-selector">
+</div>
 
-                {{-- Search --}}
+
+{{-- Edit Form --}}
+<div class="card shadow-sm">
+
+    <div class="card-body">
+
+        <form
+            action="{{ route('classes.update', $class->id) }}"
+            method="POST"
+        >
+
+            @csrf
+            @method('PUT')
+
+
+            {{-- Class Name --}}
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Class Name
+                </label>
+
                 <input
                     type="text"
-                    id="subjectSearch"
-                    class="form-control mb-2"
-                    placeholder="Search subjects...">
+                    name="name"
+                    class="form-control"
+                    value="{{ old('name', $class->name) }}"
+                    required
+                >
 
-                {{-- Subjects --}}
-                <div
-                    id="subjectList"
-                    class="border rounded p-4"
-                    style="max-height: 250px; overflow-y: auto;">
+                @error('name')
 
-                    @foreach ($subjects as $subject)
-
-                    <div class="form-check subject-item">
-
-                        <input
-                            type="checkbox"
-                            name="subjects[]"
-                            value="{{ $subject->id }}"
-                            class="form-check-input subject-checkbox"
-                            id="subject{{ $subject->id }}"
-
-                            {{ $class->subjects->contains($subject->id) ? 'checked' : '' }}>
-
-                        <label
-                            class="form-check-label"
-                            for="subject{{ $subject->id }}">
-
-                            {{ $subject->name }} - {{ $subject->code }}
-
-                        </label>
-
+                    <div class="text-danger small mt-1">
+                        {{ $message }}
                     </div>
 
-                    @endforeach
-
-                </div>
+                @enderror
 
             </div>
 
-        </div>
-        <div class="mb-3">
-            <label class="form-label">Description</label>
 
-            <textarea
-                name="description"
-                class="form-control"
-                rows="3">{{ $class->description }}</textarea>
-        </div>
+            {{-- Section --}}
+            <div class="mb-3">
 
-        <button type="submit" class="btn btn-primary-action">
-            <i class="bi bi-save me-1"></i>
-            Update Class
-        </button>
+                <label class="form-label">
+                    Section
+                </label>
 
-        <a href="/classes" class="btn btn-secondary">
-            Cancel
-        </a>
+                <input
+                    type="text"
+                    name="section"
+                    class="form-control"
+                    value="{{ old('section', $class->section) }}"
+                    required
+                >
 
-    </form>
+                @error('section')
+
+                    <div class="text-danger small mt-1">
+                        {{ $message }}
+                    </div>
+
+                @enderror
+
+            </div>
+
+
+            {{-- Description --}}
+            <div class="mb-4">
+
+                <label class="form-label">
+                    Description
+                </label>
+
+                <textarea
+                    name="description"
+                    class="form-control"
+                    rows="4"
+                >{{ old('description', $class->description) }}</textarea>
+
+                @error('description')
+
+                    <div class="text-danger small mt-1">
+                        {{ $message }}
+                    </div>
+
+                @enderror
+
+            </div>
+
+
+            {{-- Actions --}}
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+
+                <i class="bi bi-save me-1"></i>
+                Update Class
+
+            </button>
+
+
+            <a
+                href="{{ route('classes.index') }}"
+                class="btn btn-secondary"
+            >
+
+                Cancel
+
+            </a>
+
+        </form>
+
+    </div>
+
+</div>
+```
 
 </div>
 

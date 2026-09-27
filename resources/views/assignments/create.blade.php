@@ -7,24 +7,29 @@
 <div class="container-fluid">
 
 ```
+{{-- Page Header --}}
 <div class="d-flex justify-content-between align-items-center mb-4">
 
     <div>
         <h2>Assign Subject Teacher</h2>
+
         <p class="text-muted mb-0">
-            Assign a teacher to a subject in a class.
+            Assign a teacher to multiple subjects in a class.
         </p>
     </div>
 
     <a href="{{ route('assignments.index') }}"
        class="btn btn-secondary">
-        <i class="bi bi-arrow-left"></i>
+
+        <i class="bi bi-arrow-left me-1"></i>
         Back
+
     </a>
 
 </div>
 
 
+{{-- Assignment Form --}}
 <div class="card shadow-sm">
 
     <div class="card-body">
@@ -36,8 +41,7 @@
 
 
             {{-- Class --}}
-
-            <div class="mb-3">
+            <div class="mb-4">
 
                 <label class="form-label">
                     Class
@@ -53,9 +57,12 @@
 
                     @foreach ($classes as $class)
 
-                        <option value="{{ $class->id }}">
+                        <option value="{{ $class->id }}"
+                            {{ old('class_id') == $class->id ? 'selected' : '' }}>
+
                             {{ $class->name }}
                             - {{ $class->section }}
+
                         </option>
 
                     @endforeach
@@ -65,71 +72,82 @@
             </div>
 
 
-            {{-- Subject --}}
-
-            <div class="mb-3">
+            {{-- Subject Search --}}
+            <div class="mb-2">
 
                 <label class="form-label">
-                    Subject
+                    Subjects
                 </label>
 
-                <select name="subject_id"
-                        class="form-select"
-                        required>
+                <div class="input-group mb-3">
 
-                    <option value="">
-                        Select Subject
-                    </option>
+                    <span class="input-group-text">
+                        <i class="bi bi-search"></i>
+                    </span>
+
+                    <input type="text"
+                           id="subjectSearch"
+                           class="form-control"
+                           placeholder="Search subject...">
+
+                </div>
+
+            </div>
+
+
+            {{-- Subjects --}}
+            <div class="border rounded p-3 mb-4">
+
+                <div class="row">
 
                     @foreach ($subjects as $subject)
 
-                        <option value="{{ $subject->id }}">
-                            {{ $subject->name }}
-                            - {{ $subject->grade }}
-                        </option>
+                        <div class="col-md-6 col-lg-4 mb-2 subject-item">
+
+                            <div class="form-check">
+
+                                <input
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    name="subject_id[]"
+                                    value="{{ $subject->id }}"
+                                    id="subject{{ $subject->id }}"
+                                    {{ in_array(
+                                        $subject->id,
+                                        old('subject_id', [])
+                                    ) ? 'checked' : '' }}
+                                >
+
+                                <label
+                                    class="form-check-label"
+                                    for="subject{{ $subject->id }}"
+                                >
+
+                                    {{ $subject->name }}
+                                    <span class="text-muted">
+                                        - {{ $subject->grade }}
+                                    </span>
+
+                                </label>
+
+                            </div>
+
+                        </div>
 
                     @endforeach
 
-                </select>
+                </div>
 
             </div>
 
 
-            {{-- Teacher --}}
 
-            <div class="mb-3">
-
-                <label class="form-label">
-                    Teacher
-                </label>
-
-                <select name="teacher_id"
-                        class="form-select"
-                        required>
-
-                    <option value="">
-                        Select Teacher
-                    </option>
-
-                    @foreach ($teachers as $teacher)
-
-                        <option value="{{ $teacher->id }}">
-                            {{ $teacher->first_name }}
-                            {{ $teacher->last_name }}
-                        </option>
-
-                    @endforeach
-
-                </select>
-
-            </div>
-
-
+            {{-- Submit --}}
             <button type="submit"
                     class="btn btn-primary">
 
-                <i class="bi bi-check-circle"></i>
-                Assign
+                <i class="bi bi-check-circle me-1"></i>
+                Assign Subjects
 
             </button>
 

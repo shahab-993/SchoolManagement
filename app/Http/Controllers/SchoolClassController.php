@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\SchoolClass;
-use App\Models\Subject;
 use Illuminate\Http\Request;
 
 class SchoolClassController extends Controller
@@ -19,7 +18,9 @@ class SchoolClassController extends Controller
 
                     $q->where('id', 'like', "%{$query}%")
                         ->orWhere('name', 'like', "%{$query}%");
+
                 });
+
             })
             ->paginate(12)
             ->withQueryString();
@@ -30,19 +31,20 @@ class SchoolClassController extends Controller
         ));
     }
 
+
     public function create()
     {
-        $subjects = Subject::all();
-
-        return view('classes.create', compact('subjects'));
+        return view('classes.create');
     }
+
 
     public function show(SchoolClass $class)
     {
-        $class->load('subjects');
-
-        return view('classes.show', compact('class'));
+        return view('classes.show', compact(
+            'class'
+        ));
     }
+
 
     public function store(Request $request)
     {
@@ -50,45 +52,50 @@ class SchoolClassController extends Controller
             'name' => 'required|string|max:100',
             'section' => 'required|string|max:50',
             'description' => 'nullable|string',
-            'subjects' => 'nullable|array',
-            'subjects.*' => 'exists:subjects,id',
         ]);
 
-        $class = SchoolClass::create([
+        SchoolClass::create([
             'name' => $request->name,
             'section' => $request->section,
             'description' => $request->description,
         ]);
 
-        $class->subjects()->sync($request->subjects ?? []);
-
         return redirect()
             ->route('classes.index')
-            ->with('success', 'Class created successfully.');
+            ->with(
+                'success',
+                'Class created successfully.'
+            );
     }
+
 
     public function students(SchoolClass $class)
     {
         $students = $class->students;
 
-        return view('classes.students', compact('class', 'students'));
+        return view('classes.students', compact(
+            'class',
+            'students'
+        ));
     }
+
 
     public function edit(SchoolClass $class)
     {
-        $subjects = Subject::all();
-
-        return view('classes.edit', compact('class', 'subjects'));
+        return view('classes.edit', compact(
+            'class'
+        ));
     }
 
-    public function update(Request $request, SchoolClass $class)
-    {
+
+    public function update(
+        Request $request,
+        SchoolClass $class
+    ) {
         $request->validate([
             'name' => 'required|string|max:100',
             'section' => 'required|string|max:50',
             'description' => 'nullable|string',
-            'subjects' => 'nullable|array',
-            'subjects.*' => 'exists:subjects,id',
         ]);
 
         $class->update([
@@ -96,13 +103,15 @@ class SchoolClassController extends Controller
             'section' => $request->section,
             'description' => $request->description,
         ]);
-        // dd($request->subjects);
-        $class->subjects()->sync($request->subjects ?? []);
 
         return redirect()
             ->route('classes.index')
-            ->with('success', 'Class updated successfully!');
+            ->with(
+                'success',
+                'Class updated successfully.'
+            );
     }
+
 
     public function destroy(SchoolClass $class)
     {
@@ -110,6 +119,9 @@ class SchoolClassController extends Controller
 
         return redirect()
             ->route('classes.index')
-            ->with('success', 'Class deleted successfully!');
+            ->with(
+                'success',
+                'Class deleted successfully.'
+            );
     }
 }

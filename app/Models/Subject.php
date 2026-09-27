@@ -31,4 +31,8 @@ public function teachers()
         'teacher_id'
     );
 }
+public function marks()
+{
+    return $this->hasMany(Mark::class);
+}
 }

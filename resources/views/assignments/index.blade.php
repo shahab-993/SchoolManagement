@@ -1,84 +1,91 @@
 @extends('layouts.app')
 
-@section('title', 'Subject Teacher Assignments')
+@section('title', 'Class Subject Assignments')
 
 @section('content')
 
 <div class="container-fluid">
 
+```
+{{-- Page Header --}}
+<div class="d-flex justify-content-between align-items-center mb-4">
 
-    {{-- Page Header --}}
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
 
-        <div>
-            <h2>Subject Teacher Assignments</h2>
-            <div class="col-md-6 mb-4">
+        <h2>Class Subject Assignments</h2>
 
-                <div class="input-group">
+        <p class="text-muted mb-3">
+            Manage subjects assigned to classes.
+        </p>
 
-                    <span class="input-group-text bg-white">
-                        <i class="bi bi-search"></i>
-                    </span>
+        <div class="col-md-6">
 
-                    <input
-                        type="search"
-                        id="assignmentSearch"
-                        class="form-control"
-                        placeholder="Search assignment by ID, class, subject or teacher..."
-                        value="{{ $query ?? '' }}">
-                </div>
+            <div class="input-group">
+
+                <span class="input-group-text bg-white">
+                    <i class="bi bi-search"></i>
+                </span>
+
+                <input
+                    type="search"
+                    id="assignmentSearch"
+                    class="form-control"
+                    placeholder="Search assignment by ID, class or subject..."
+                    value="{{ $query ?? '' }}"
+                >
 
             </div>
 
-            <p class="text-muted mb-0">
-                Manage teachers assigned to subjects and classes.
-            </p>
         </div>
-
-        <a href="{{ route('assignments.create') }}"
-            class="btn btn-primary">
-
-            <i class="bi bi-plus-circle"></i>
-            Assign Teacher
-
-        </a>
 
     </div>
 
 
-    {{-- Assignments Card --}}
-    <div class="card shadow-sm">
+    <a href="{{ route('assignments.create') }}"
+       class="btn btn-primary">
 
-        <div class="card-body p-0">
+        <i class="bi bi-plus-circle me-1"></i>
+        Assign Subjects
 
-            <div class="table-responsive">
+    </a>
 
-                <table id="assignmentsTable" class="table table-hover mb-0">
-
-                    {{-- Table Header --}}
-                    <thead class="table-light">
-
-                        <tr>
-
-                            <th>#</th>
-
-                            <th>Class</th>
-
-                            <th>Subject</th>
-
-                            <th>Teacher</th>
-
-                            <th>Actions</th>
-
-                        </tr>
-
-                    </thead>
+</div>
 
 
-                    {{-- Table Body --}}
-                    <tbody>
+{{-- Assignments Card --}}
+<div class="card shadow-sm">
 
-                        @forelse ($assignments as $assignment)
+    <div class="card-body p-0">
+
+        <div class="table-responsive">
+
+            <table
+                id="assignmentsTable"
+                class="table table-hover mb-0"
+            >
+
+                {{-- Table Header --}}
+                <thead class="table-light">
+
+                    <tr>
+
+                        <th>#</th>
+
+                        <th>Class</th>
+
+                        <th>Subject</th>
+
+                        <th>Actions</th>
+
+                    </tr>
+
+                </thead>
+
+
+                {{-- Table Body --}}
+                <tbody>
+
+                    @forelse ($assignments as $assignment)
 
                         <tr>
 
@@ -92,8 +99,10 @@
                             <td>
 
                                 {{ $assignment->schoolClass->name }}
-                                -
-                                {{ $assignment->schoolClass->section }}
+
+                                @if ($assignment->schoolClass->section)
+                                    - {{ $assignment->schoolClass->section }}
+                                @endif
 
                             </td>
 
@@ -103,14 +112,11 @@
 
                                 {{ $assignment->subject->name }}
 
-                            </td>
-
-
-                            {{-- Teacher --}}
-                            <td>
-
-                                {{ $assignment->teacher->first_name }}
-                                {{ $assignment->teacher->last_name }}
+                                @if ($assignment->subject->code)
+                                    <span class="text-muted">
+                                        - {{ $assignment->subject->code }}
+                                    </span>
+                                @endif
 
                             </td>
 
@@ -119,29 +125,43 @@
                             <td>
 
                                 {{-- Edit --}}
-                                <a href="{{ route('assignments.edit', $assignment) }}"
-                                    class="btn btn-sm btn-warning">
+                                <a
+                                    href="{{ route(
+                                        'assignments.edit',
+                                        $assignment
+                                    ) }}"
+                                    class="btn btn-sm btn-warning"
+                                >
 
-                                    <i class="bi bi-pencil"></i>
+                                    <i class="bi bi-pencil me-1"></i>
                                     Edit
 
                                 </a>
 
 
                                 {{-- Delete --}}
-                                <form action="{{ route('assignments.destroy', $assignment) }}"
+                                <form
+                                    action="{{ route(
+                                        'assignments.destroy',
+                                        $assignment
+                                    ) }}"
                                     method="POST"
-                                    class="d-inline">
+                                    class="d-inline"
+                                >
 
                                     @csrf
 
                                     @method('DELETE')
 
-                                    <button type="submit"
+                                    <button
+                                        type="submit"
                                         class="btn btn-sm btn-danger"
-                                        onclick="return confirm('Are you sure you want to delete this assignment?')">
+                                        onclick="return confirm(
+                                            'Are you sure you want to delete this assignment?'
+                                        )"
+                                    >
 
-                                        <i class="bi bi-trash"></i>
+                                        <i class="bi bi-trash me-1"></i>
                                         Delete
 
                                     </button>
@@ -152,12 +172,14 @@
 
                         </tr>
 
-                        @empty
+                    @empty
 
                         <tr>
 
-                            <td colspan="5"
-                                class="text-center text-muted py-4">
+                            <td
+                                colspan="4"
+                                class="text-center text-muted py-4"
+                            >
 
                                 <i class="bi bi-inbox fs-3 d-block mb-2"></i>
 
@@ -167,21 +189,26 @@
 
                         </tr>
 
-                        @endforelse
+                    @endforelse
 
-                    </tbody>
+                </tbody>
 
-                </table>
-                <div class="mt-4">
-                    {{ $assignments->links() }}
-                </div>
+            </table>
 
-            </div>
+        </div>
+
+
+        {{-- Pagination --}}
+        <div class="p-3">
+
+            {{ $assignments->links() }}
 
         </div>
 
     </div>
 
+</div>
+```
 
 </div>
 

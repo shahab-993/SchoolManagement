@@ -11,7 +11,6 @@ class ClassSubjectTeacher extends Model
     protected $fillable = [
         'class_id',
         'subject_id',
-        'teacher_id',
     ];
 
     public function schoolClass()
@@ -27,14 +26,6 @@ class ClassSubjectTeacher extends Model
         return $this->belongsTo(
             Subject::class,
             'subject_id'
-        );
-    }
-
-    public function teacher()
-    {
-        return $this->belongsTo(
-            Teacher::class,
-            'teacher_id'
         );
     }
 }
