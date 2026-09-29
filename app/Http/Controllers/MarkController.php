@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AcademicYear;
 use App\Models\ClassSubjectTeacher;
 use App\Models\Exam;
 use App\Models\Mark;
@@ -101,7 +102,7 @@ class MarkController extends Controller
         ]);
 
 
-        // Check subject assignment
+        // Check that the subject is assigned to this class
         $assignmentExists = ClassSubjectTeacher::where(
             'class_id',
             $schoolClass->id
@@ -133,26 +134,35 @@ class MarkController extends Controller
         );
 
 
-        // Get current academic year exams
+        // Get active academic year
+        $academicYear = AcademicYear::where(
+            'is_active',
+            true
+        )->firstOrFail();
+
+
+        // Get exams for active academic year
         $exams = Exam::where(
             'academic_year',
-            '2026-2027'
+            $academicYear->name
         )
             ->whereIn('type', [
                 'midterm',
-                'annual'
+                'annual',
             ])
             ->get()
             ->keyBy('type');
 
 
+        // Make sure both exams exist
         abort_unless(
             $exams->has('midterm') &&
-            $exams->has('annual'),
+                $exams->has('annual'),
             404
         );
 
 
+        // Save marks inside a transaction
         DB::transaction(function () use (
             $request,
             $subject,
@@ -163,6 +173,7 @@ class MarkController extends Controller
                 $request->marks as $studentId => $studentMarks
             ) {
 
+                // Midterm mark
                 if (
                     isset($studentMarks['midterm']) &&
                     $studentMarks['midterm'] !== null &&
@@ -183,6 +194,7 @@ class MarkController extends Controller
                 }
 
 
+                // Annual mark
                 if (
                     isset($studentMarks['annual']) &&
                     $studentMarks['annual'] !== null &&

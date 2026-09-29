@@ -99,6 +99,10 @@ Route::get(
     '/classes/{schoolClass}/subjects',
     [ClassSubjectTeacherController::class, 'subjects']
 )->name('classes.subjects');
+Route::get(
+    '/classes/{schoolClass}/assigned-subjects',
+    [ClassSubjectTeacherController::class, 'getSubjects']
+)->name('classes.assignedSubjects');
 
 
 

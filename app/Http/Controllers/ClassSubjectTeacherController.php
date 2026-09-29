@@ -9,37 +9,16 @@ use Illuminate\Http\Request;
 
 class ClassSubjectTeacherController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $query = $request->input('search');
-
-        $assignments = ClassSubjectTeacher::with([
-            'schoolClass',
-            'subject'
-        ])
-            ->when($query, function ($q) use ($query) {
-
-                $q->where(function ($q) use ($query) {
-
-                    $q->where('id', 'like', "%{$query}%")
-
-                        ->orWhereHas('schoolClass', function ($q) use ($query) {
-                            $q->where('name', 'like', "%{$query}%");
-                        })
-
-                        ->orWhereHas('subject', function ($q) use ($query) {
-                            $q->where('name', 'like', "%{$query}%");
-                        });
-
-                });
-
-            })
-            ->paginate(12)
-            ->withQueryString();
+        $classes = SchoolClass::orderByRaw(
+            "CAST(REGEXP_SUBSTR(name, '[0-9]+') AS UNSIGNED)"
+        )
+            ->orderBy('section')
+            ->paginate(12);
 
         return view('assignments.index', compact(
-            'assignments',
-            'query'
+            'classes'
         ));
     }
 
@@ -80,7 +59,6 @@ class ClassSubjectTeacherController extends Controller
                 'class_id' => $request->class_id,
                 'subject_id' => $subjectId,
             ]);
-
         }
 
 
@@ -153,11 +131,24 @@ class ClassSubjectTeacherController extends Controller
         $subjects = ClassSubjectTeacher::with('subject')
             ->where('class_id', $schoolClass->id)
             ->get()
-            ->unique('subject_id');
+            ->unique('subject_id')
+            ->sortBy(function ($assignment) {
+                return $assignment->subject->name;
+            })
+            ->values();
 
         return view('classes.subjects', compact(
             'schoolClass',
             'subjects'
         ));
+    }
+    public function getSubjects(SchoolClass $schoolClass)
+    {
+        $subjectIds = ClassSubjectTeacher::where(
+            'class_id',
+            $schoolClass->id
+        )->pluck('subject_id');
+
+        return response()->json($subjectIds);
     }
 }

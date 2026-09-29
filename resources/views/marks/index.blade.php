@@ -6,7 +6,6 @@
 
 <div class="container-fluid mt-4 px-4">
 
-```
 {{-- Page Header --}}
 <div class="d-flex justify-content-between align-items-center mb-4">
 
@@ -35,15 +34,6 @@
 
 </div>
 
-
-{{-- Success Message --}}
-@if (session('success'))
-
-    <div class="alert alert-success">
-        {{ session('success') }}
-    </div>
-
-@endif
 
 
 {{-- Validation Errors --}}
@@ -405,7 +395,7 @@
     </div>
 
 </div>
-```
+
 
 </div>
 

@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Class Subject Assignments')
+@section('title', 'Class Subjects')
 
 @section('content')
 
@@ -12,37 +12,18 @@
 
     <div>
 
-        <h2>Class Subject Assignments</h2>
+        <h2>Class Subjects</h2>
 
-        <p class="text-muted mb-3">
-            Manage subjects assigned to classes.
+        <p class="text-muted mb-0">
+            Select a class to view and manage its subjects.
         </p>
-
-        <div class="col-md-6">
-
-            <div class="input-group">
-
-                <span class="input-group-text bg-white">
-                    <i class="bi bi-search"></i>
-                </span>
-
-                <input
-                    type="search"
-                    id="assignmentSearch"
-                    class="form-control"
-                    placeholder="Search assignment by ID, class or subject..."
-                    value="{{ $query ?? '' }}"
-                >
-
-            </div>
-
-        </div>
 
     </div>
 
-
-    <a href="{{ route('assignments.create') }}"
-       class="btn btn-primary">
+    <a
+        href="{{ route('assignments.create') }}"
+        class="btn btn-primary"
+    >
 
         <i class="bi bi-plus-circle me-1"></i>
         Assign Subjects
@@ -52,162 +33,102 @@
 </div>
 
 
-{{-- Assignments Card --}}
-<div class="card shadow-sm">
+{{-- Classes --}}
+<div class="row g-4">
 
-    <div class="card-body p-0">
+    @forelse ($classes as $class)
 
-        <div class="table-responsive">
+        <div class="col-12 col-sm-6 col-lg-4 col-xl-3">
 
-            <table
-                id="assignmentsTable"
-                class="table table-hover mb-0"
+            <a
+                href="{{ route(
+                    'classes.subjects',
+                    $class->id
+                ) }}"
+                class="text-decoration-none"
             >
 
-                {{-- Table Header --}}
-                <thead class="table-light">
+                <div class="card shadow-sm h-100 border-0">
 
-                    <tr>
+                    <div class="card-body p-4">
 
-                        <th>#</th>
+                        <div class="d-flex align-items-center mb-3">
 
-                        <th>Class</th>
-
-                        <th>Subject</th>
-
-                        <th>Actions</th>
-
-                    </tr>
-
-                </thead>
-
-
-                {{-- Table Body --}}
-                <tbody>
-
-                    @forelse ($assignments as $assignment)
-
-                        <tr>
-
-                            {{-- Number --}}
-                            <td>
-                                {{ $loop->iteration }}
-                            </td>
-
-
-                            {{-- Class --}}
-                            <td>
-
-                                {{ $assignment->schoolClass->name }}
-
-                                @if ($assignment->schoolClass->section)
-                                    - {{ $assignment->schoolClass->section }}
-                                @endif
-
-                            </td>
-
-
-                            {{-- Subject --}}
-                            <td>
-
-                                {{ $assignment->subject->name }}
-
-                                @if ($assignment->subject->code)
-                                    <span class="text-muted">
-                                        - {{ $assignment->subject->code }}
-                                    </span>
-                                @endif
-
-                            </td>
-
-
-                            {{-- Actions --}}
-                            <td>
-
-                                {{-- Edit --}}
-                                <a
-                                    href="{{ route(
-                                        'assignments.edit',
-                                        $assignment
-                                    ) }}"
-                                    class="btn btn-sm btn-warning"
-                                >
-
-                                    <i class="bi bi-pencil me-1"></i>
-                                    Edit
-
-                                </a>
-
-
-                                {{-- Delete --}}
-                                <form
-                                    action="{{ route(
-                                        'assignments.destroy',
-                                        $assignment
-                                    ) }}"
-                                    method="POST"
-                                    class="d-inline"
-                                >
-
-                                    @csrf
-
-                                    @method('DELETE')
-
-                                    <button
-                                        type="submit"
-                                        class="btn btn-sm btn-danger"
-                                        onclick="return confirm(
-                                            'Are you sure you want to delete this assignment?'
-                                        )"
-                                    >
-
-                                        <i class="bi bi-trash me-1"></i>
-                                        Delete
-
-                                    </button>
-
-                                </form>
-
-                            </td>
-
-                        </tr>
-
-                    @empty
-
-                        <tr>
-
-                            <td
-                                colspan="4"
-                                class="text-center text-muted py-4"
+                            <div
+                                class="bg-light rounded-circle d-flex align-items-center justify-content-center me-3"
+                                style="width: 50px; height: 50px;"
                             >
 
-                                <i class="bi bi-inbox fs-3 d-block mb-2"></i>
+                                <i class="bi bi-building fs-4 text-primary"></i>
 
-                                No assignments found.
+                            </div>
 
-                            </td>
+                            <div>
 
-                        </tr>
+                                <h5 class="mb-1 text-dark">
+                                    {{ $class->name }}
+                                </h5>
 
-                    @endforelse
+                                @if ($class->section)
 
-                </tbody>
+                                    <span class="text-muted">
+                                        Section {{ $class->section }}
+                                    </span>
 
-            </table>
+                                @endif
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="text-muted">
+
+                            <i class="bi bi-book me-1"></i>
+
+                            View Subjects
+
+                            <i class="bi bi-arrow-right float-end"></i>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </a>
 
         </div>
 
+    @empty
 
-        {{-- Pagination --}}
-        <div class="p-3">
+        <div class="col-12">
 
-            {{ $assignments->links() }}
+            <div class="text-center text-muted py-5">
+
+                <i class="bi bi-building-x fs-1 d-block mb-3"></i>
+
+                No classes found.
+
+            </div>
 
         </div>
+
+    @endforelse
+
+</div>
+
+
+{{-- Pagination --}}
+@if ($classes->hasPages())
+
+    <div class="mt-4">
+
+        {{ $classes->links() }}
 
     </div>
 
-</div>
+@endif
 ```
 
 </div>
