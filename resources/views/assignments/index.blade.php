@@ -6,7 +6,6 @@
 
 <div class="container-fluid">
 
-```
 {{-- Page Header --}}
 <div class="d-flex justify-content-between align-items-center mb-4">
 
@@ -129,7 +128,7 @@
     </div>
 
 @endif
-```
+
 
 </div>
 

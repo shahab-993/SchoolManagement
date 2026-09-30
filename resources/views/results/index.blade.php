@@ -6,279 +6,302 @@
 
 <div class="container-fluid mt-4 px-3">
 
+    ```
+    {{-- =========================================
+     PAGE HEADER
+========================================== --}}
 
-{{-- Page Header --}}
-<div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="d-flex justify-content-between align-items-center mb-3">
 
-    <div>
+        <div>
 
-        <h1 class="mb-1">
-            Result Report
-        </h1>
+            <h1 class="mb-1">
+                Result Report
+            </h1>
 
-        <div class="text-muted small">
-            {{ $schoolClass->name }}
+            <div class="text-muted small">
 
-            @if ($schoolClass->section)
+                {{ $schoolClass->name }}
+
+                @if ($schoolClass->section)
                 - {{ $schoolClass->section }}
-            @endif
+                @endif
+
+            </div>
+
         </div>
+
+
+        <a
+            href="{{ route('classes.index') }}"
+            class="btn btn-secondary btn-sm">
+
+            <i class="bi bi-arrow-left me-1"></i>
+            Back
+
+        </a>
 
     </div>
 
-    <a
-        href="{{ route('classes.index') }}"
-        class="btn btn-secondary btn-sm"
-    >
-        <i class="bi bi-arrow-left me-1"></i>
-        Back
-    </a>
 
-</div>
+    {{-- =========================================
+     RESULT CARD
+========================================== --}}
 
+    <div class="card shadow-sm border-0">
 
-{{-- Result Card --}}
-<div class="card shadow-sm border-0">
+        <div class="card-body p-2">
 
-    <div class="card-body p-2">
+            <div class="table-responsive">
 
-        <div class="table-responsive">
+                <table class="table result-table mb-0">
 
-            <table class="table result-table mb-0">
-
-                {{-- =========================
+                    {{-- =========================================
                      TABLE HEADER
-                ========================== --}}
-                <thead>
+                ========================================== --}}
 
-                    <tr>
+                    <thead>
 
-                        <th class="number-header">
-                            No
-                        </th>
+                        <tr>
 
-                        <th class="student-header">
-                            Student
-                        </th>
+                            {{-- No --}}
+                            <th class="number-header">
+                                No
+                            </th>
 
 
-                        {{-- Subjects --}}
-                        @foreach ($subjects as $subject)
+                            {{-- Student --}}
+                            <th class="student-header">
+                                Student
+                            </th>
+
+
+                            {{-- Subjects --}}
+                            @foreach ($subjects as $subject)
 
                             <th class="subject-header">
                                 {{ $subject->name }}
                             </th>
 
-                        @endforeach
+                            @endforeach
 
 
-                        <th class="overall-header">
-                            Total
-                        </th>
-
-                        <th class="overall-header">
-                            %
-                        </th>
-
-                        <th class="overall-header">
-                            Grade
-                        </th>
-
-                        <th class="overall-header">
-                            Result
-                        </th>
-
-                    </tr>
-
-                </thead>
+                            {{-- Total --}}
+                            <th class="overall-header">
+                                Total
+                            </th>
 
 
-                {{-- =========================
+                            {{-- Percentage --}}
+                            <th class="overall-header">
+                                %
+                            </th>
+
+
+                            {{-- Grade --}}
+                            <th class="overall-header">
+                                Grade
+                            </th>
+
+
+                            {{-- Result --}}
+                            <th class="overall-header">
+                                Result
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    {{-- =========================================
                      TABLE BODY
-                ========================== --}}
-                <tbody>
+                ========================================== --}}
 
-                    @forelse ($results as $result)
+                    <tbody>
+
+                        @forelse ($results as $result)
 
                         @php
 
-                            $subjectResults = collect(
-                                $result['subjects']
-                            )->values();
+                        $subjectResults = collect(
+                        $result['subjects']
+                        )->values();
 
 
-                            /*
-                            |--------------------------------------------------------------------------
-                            | Calculate only entered marks
-                            |--------------------------------------------------------------------------
-                            */
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Exam 1
+                        |--------------------------------------------------------------------------
+                        */
 
-                            $overallMidterm = 0;
-                            $overallAnnual = 0;
-                            $overallTotal = 0;
+                        $overallMidterm = 0;
 
-                            $overallMaximum = 0;
+                        $midtermMaximum = 0;
 
 
-                            foreach ($subjectResults as $studentSubject) {
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Exam 2
+                        |--------------------------------------------------------------------------
+                        */
 
-                                $midterm =
-                                    $studentSubject['midterm'] ?? null;
+                        $overallAnnual = 0;
 
-                                $annual =
-                                    $studentSubject['annual'] ?? null;
-
-
-                                /*
-                                | Midterm is counted only
-                                | when a value exists.
-                                */
-
-                                if (
-                                    $midterm !== null &&
-                                    $midterm !== ''
-                                ) {
-
-                                    $overallMidterm += (float) $midterm;
-
-                                    $overallMaximum += 40;
-
-                                }
+                        $annualMaximum = 0;
 
 
-                                /*
-                                | Annual is counted only
-                                | when a value exists.
-                                */
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Total
+                        |--------------------------------------------------------------------------
+                        */
 
-                                if (
-                                    $annual !== null &&
-                                    $annual !== ''
-                                ) {
-
-                                    $overallAnnual += (float) $annual;
-
-                                    $overallMaximum += 60;
-
-                                }
+                        $overallTotal = 0;
 
 
-                                /*
-                                | Subject total
-                                */
+                        foreach ($subjectResults as $studentSubject) {
 
-                                $subjectTotal = 0;
+                        $midterm =
+                        $studentSubject['midterm']
+                        ?? null;
 
-                                if (
-                                    $midterm !== null &&
-                                    $midterm !== ''
-                                ) {
-
-                                    $subjectTotal += (float) $midterm;
-
-                                }
-
-                                if (
-                                    $annual !== null &&
-                                    $annual !== ''
-                                ) {
-
-                                    $subjectTotal += (float) $annual;
-
-                                }
-
-                                if (
-                                    (
-                                        $midterm !== null &&
-                                        $midterm !== ''
-                                    )
-                                    ||
-                                    (
-                                        $annual !== null &&
-                                        $annual !== ''
-                                    )
-                                ) {
-
-                                    $overallTotal += $subjectTotal;
-
-                                }
-
-                            }
+                        $annual =
+                        $studentSubject['annual']
+                        ?? null;
 
 
-                            /*
-                            |--------------------------------------------------------------------------
-                            | Percentage
-                            |--------------------------------------------------------------------------
-                            */
+                        /*
+                        |--------------------------------------------------------------------------
+                        | First Exam
+                        |--------------------------------------------------------------------------
+                        */
 
-                            $percentage = null;
+                        if (
+                        $midterm !== null &&
+                        $midterm !== ''
+                        ) {
 
-                            if ($overallMaximum > 0) {
+                        $overallMidterm +=
+                        (float) $midterm;
 
-                                $percentage = round(
-                                    ($overallTotal / $overallMaximum) * 100,
-                                    2
-                                );
+                        $midtermMaximum += 40;
 
-                            }
-
-
-                            /*
-                            |--------------------------------------------------------------------------
-                            | Grade
-                            |--------------------------------------------------------------------------
-                            */
-
-                            $grade = null;
-
-                            if ($percentage !== null) {
-
-                                if ($percentage >= 90) {
-
-                                    $grade = 'A';
-
-                                } elseif ($percentage >= 80) {
-
-                                    $grade = 'B';
-
-                                } elseif ($percentage >= 70) {
-
-                                    $grade = 'C';
-
-                                } elseif ($percentage >= 60) {
-
-                                    $grade = 'D';
-
-                                } elseif ($percentage >= 50) {
-
-                                    $grade = 'E';
-
-                                } else {
-
-                                    $grade = 'F';
-
-                                }
-
-                            }
+                        }
 
 
-                            /*
-                            |--------------------------------------------------------------------------
-                            | Result
-                            |--------------------------------------------------------------------------
-                            */
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Second Exam
+                        |--------------------------------------------------------------------------
+                        */
 
-                            $finalResult = null;
+                        if (
+                        $annual !== null &&
+                        $annual !== ''
+                        ) {
 
-                            if ($percentage !== null) {
+                        $overallAnnual +=
+                        (float) $annual;
 
-                                $finalResult =
-                                    $percentage >= 40
-                                        ? 'Pass'
-                                        : 'Fail';
+                        $annualMaximum += 60;
 
-                            }
+                        }
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Subject Total
+                        |--------------------------------------------------------------------------
+                        */
+
+                        if (
+                        (
+                        $midterm !== null &&
+                        $midterm !== ''
+                        )
+                        ||
+                        (
+                        $annual !== null &&
+                        $annual !== ''
+                        )
+                        ) {
+
+                        $subjectTotal = 0;
+
+
+                        if (
+                        $midterm !== null &&
+                        $midterm !== ''
+                        ) {
+
+                        $subjectTotal +=
+                        (float) $midterm;
+
+                        }
+
+
+                        if (
+                        $annual !== null &&
+                        $annual !== ''
+                        ) {
+
+                        $subjectTotal +=
+                        (float) $annual;
+
+                        }
+
+
+                        $overallTotal +=
+                        $subjectTotal;
+
+                        }
+
+                        }
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | First Exam Percentage
+                        |--------------------------------------------------------------------------
+                        */
+
+                        $midtermPercentage = null;
+
+
+                        if ($midtermMaximum > 0) {
+
+                        $midtermPercentage = round(
+                        (
+                        $overallMidterm /
+                        $midtermMaximum
+                        ) * 100,
+                        2
+                        );
+
+                        }
+
+
+                        /*
+                        |--------------------------------------------------------------------------
+                        | Second Exam Percentage
+                        |--------------------------------------------------------------------------
+                        */
+
+                        $annualPercentage = null;
+
+
+                        if ($annualMaximum > 0) {
+
+                        $annualPercentage = round(
+                        (
+                        $overallAnnual /
+                        $annualMaximum
+                        ) * 100,
+                        2
+                        );
+
+                        }
 
                         @endphp
 
@@ -286,13 +309,13 @@
                         {{-- ==================================================
                              ROW 1 - FIRST EXAM
                         =================================================== --}}
+
                         <tr>
 
                             {{-- No --}}
                             <td
                                 rowspan="3"
-                                class="student-number"
-                            >
+                                class="student-number">
 
                                 {{ $loop->iteration }}
 
@@ -302,8 +325,7 @@
                             {{-- Student --}}
                             <td
                                 rowspan="3"
-                                class="student-name"
-                            >
+                                class="student-name">
 
                                 {{ $result['student']->first_name }}
 
@@ -315,51 +337,49 @@
                             {{-- Subject First Exam --}}
                             @foreach ($subjectResults as $studentSubject)
 
-                                @php
+                            @php
 
-                                    $midterm =
-                                        $studentSubject['midterm']
-                                        ?? null;
+                            $midterm =
+                            $studentSubject['midterm']
+                            ?? null;
 
-                                @endphp
+                            @endphp
 
-                                <td class="mark-cell">
 
-                                    @if (
-                                        $midterm !== null &&
-                                        $midterm !== ''
-                                    )
+                            <td class="mark-cell">
 
-                                        {{ $midterm }}
+                                @if (
+                                $midterm !== null &&
+                                $midterm !== ''
+                                )
 
-                                    @endif
+                                {{ $midterm }}
 
-                                </td>
+                                @endif
+
+                            </td>
 
                             @endforeach
 
 
-                            {{-- Grand Total First Exam --}}
+                            {{-- First Exam Total --}}
                             <td class="grand-total-cell">
 
-                                @if ($overallMaximum > 0)
+                                @if ($midtermMaximum > 0)
 
-                                    {{ $overallMidterm }}
+                                {{ $overallMidterm }}
 
                                 @endif
 
                             </td>
 
 
-                            {{-- Percentage --}}
-                            <td
-                                rowspan="3"
-                                class="summary-cell"
-                            >
+                            {{-- First Exam Percentage --}}
+                            <td class="summary-cell">
 
-                                @if ($percentage !== null)
+                                @if ($midtermPercentage !== null)
 
-                                    {{ $percentage }}%
+                                {{ $midtermPercentage }}%
 
                                 @endif
 
@@ -369,10 +389,9 @@
                             {{-- Grade --}}
                             <td
                                 rowspan="3"
-                                class="summary-cell grade-cell"
-                            >
+                                class="summary-cell grade-cell">
 
-                                {{ $grade ?? '' }}
+                                {{ $result['grade'] ?? '' }}
 
                             </td>
 
@@ -380,20 +399,19 @@
                             {{-- Result --}}
                             <td
                                 rowspan="3"
-                                class="summary-cell"
-                            >
+                                class="summary-cell">
 
-                                @if ($finalResult === 'Pass')
+                                @if ($result['result'] === 'Pass')
 
-                                    <span class="badge bg-success">
-                                        Pass
-                                    </span>
+                                <span class="badge bg-success">
+                                    Pass
+                                </span>
 
-                                @elseif ($finalResult === 'Fail')
+                                @elseif ($result['result'] === 'Fail')
 
-                                    <span class="badge bg-danger">
-                                        Fail
-                                    </span>
+                                <span class="badge bg-danger">
+                                    Fail
+                                </span>
 
                                 @endif
 
@@ -405,40 +423,55 @@
                         {{-- ==================================================
                              ROW 2 - SECOND EXAM
                         =================================================== --}}
+
                         <tr>
 
+                            {{-- Subject Second Exam --}}
                             @foreach ($subjectResults as $studentSubject)
 
-                                @php
+                            @php
 
-                                    $annual =
-                                        $studentSubject['annual']
-                                        ?? null;
+                            $annual =
+                            $studentSubject['annual']
+                            ?? null;
 
-                                @endphp
+                            @endphp
 
-                                <td class="mark-cell">
 
-                                    @if (
-                                        $annual !== null &&
-                                        $annual !== ''
-                                    )
+                            <td class="mark-cell">
 
-                                        {{ $annual }}
+                                @if (
+                                $annual !== null &&
+                                $annual !== ''
+                                )
 
-                                    @endif
+                                {{ $annual }}
 
-                                </td>
+                                @endif
+
+                            </td>
 
                             @endforeach
 
 
-                            {{-- Grand Total Second Exam --}}
+                            {{-- Second Exam Total --}}
                             <td class="grand-total-cell">
 
-                                @if ($overallMaximum > 0)
+                                @if ($annualMaximum > 0)
 
-                                    {{ $overallAnnual }}
+                                {{ $overallAnnual }}
+
+                                @endif
+
+                            </td>
+
+
+                            {{-- Second Exam Percentage --}}
+                            <td class="summary-cell">
+
+                                @if ($annualPercentage !== null)
+
+                                {{ $annualPercentage }}%
 
                                 @endif
 
@@ -450,64 +483,67 @@
                         {{-- ==================================================
                              ROW 3 - TOTAL
                         =================================================== --}}
+
                         <tr class="student-end">
 
+                            {{-- Subject Total --}}
                             @foreach ($subjectResults as $studentSubject)
 
-                                @php
+                            @php
 
-                                    $midterm =
-                                        $studentSubject['midterm']
-                                        ?? null;
+                            $midterm =
+                            $studentSubject['midterm']
+                            ?? null;
 
-                                    $annual =
-                                        $studentSubject['annual']
-                                        ?? null;
-
-
-                                    $hasMidterm =
-                                        $midterm !== null &&
-                                        $midterm !== '';
-
-                                    $hasAnnual =
-                                        $annual !== null &&
-                                        $annual !== '';
-
-                                    $hasAnyMark =
-                                        $hasMidterm ||
-                                        $hasAnnual;
+                            $annual =
+                            $studentSubject['annual']
+                            ?? null;
 
 
-                                    $subjectTotal = 0;
+                            $hasMidterm =
+                            $midterm !== null &&
+                            $midterm !== '';
+
+                            $hasAnnual =
+                            $annual !== null &&
+                            $annual !== '';
 
 
-                                    if ($hasMidterm) {
-
-                                        $subjectTotal +=
-                                            (float) $midterm;
-
-                                    }
+                            $hasAnyMark =
+                            $hasMidterm ||
+                            $hasAnnual;
 
 
-                                    if ($hasAnnual) {
-
-                                        $subjectTotal +=
-                                            (float) $annual;
-
-                                    }
-
-                                @endphp
+                            $subjectTotal = 0;
 
 
-                                <td class="mark-cell total-cell">
+                            if ($hasMidterm) {
 
-                                    @if ($hasAnyMark)
+                            $subjectTotal +=
+                            (float) $midterm;
 
-                                        {{ $subjectTotal }}
+                            }
 
-                                    @endif
 
-                                </td>
+                            if ($hasAnnual) {
+
+                            $subjectTotal +=
+                            (float) $annual;
+
+                            }
+
+                            @endphp
+
+
+                            <td class="mark-cell total-cell">
+
+                                @if ($hasAnyMark)
+
+                                {{ $subjectTotal }}
+
+                                @endif
+
+                            </td>
 
                             @endforeach
 
@@ -515,9 +551,21 @@
                             {{-- Grand Total --}}
                             <td class="grand-total-cell total-cell">
 
-                                @if ($overallMaximum > 0)
+                                @if ($midtermMaximum > 0 || $annualMaximum > 0)
 
-                                    {{ $overallTotal }}
+                                {{ $overallTotal }}
+
+                                @endif
+
+                            </td>
+
+
+                            {{-- Total Percentage --}}
+                            <td class="summary-cell">
+
+                                @if ($result['percentage'] !== null)
+
+                                {{ $result['percentage'] }}%
 
                                 @endif
 
@@ -526,18 +574,16 @@
                         </tr>
 
 
-                    @empty
+                        @empty
 
                         <tr>
 
                             <td
                                 colspan="{{ 6 + $subjects->count() }}"
-                                class="text-center text-muted py-5"
-                            >
+                                class="text-center text-muted py-5">
 
                                 <i
-                                    class="bi bi-journal-x fs-3 d-block mb-2"
-                                ></i>
+                                    class="bi bi-journal-x fs-3 d-block mb-2"></i>
 
                                 No students found.
 
@@ -545,17 +591,20 @@
 
                         </tr>
 
-                    @endforelse
+                        @endforelse
 
-                </tbody>
+                    </tbody>
 
-            </table>
+                </table>
 
-        </div>
+            </div>
 
 
-        {{-- Pagination --}}
-        @if ($students->hasPages())
+            {{-- =========================================
+             PAGINATION
+        ========================================== --}}
+
+            @if ($students->hasPages())
 
             <div class="d-flex justify-content-between align-items-center mt-3">
 
@@ -571,6 +620,7 @@
 
                 </div>
 
+
                 <div>
 
                     {{ $students->links() }}
@@ -579,25 +629,20 @@
 
             </div>
 
-        @endif
+            @endif
+
+        </div>
 
     </div>
+    ```
 
 </div>
 
-
-</div>
-
-{{-- =========================
+{{-- =========================================
 RESULT TABLE CSS
-========================== --}}
+========================================== --}}
 
 <style>
-
-    /* =========================================
-       TABLE
-    ========================================== */
-
     .result-table {
 
         width: 100%;
@@ -606,10 +651,16 @@ RESULT TABLE CSS
 
         table-layout: fixed;
 
+        text-align: center;
+
         font-size: 12px;
 
     }
 
+
+    /* =========================================
+       ALL CELLS
+    ========================================== */
 
     .result-table th,
     .result-table td {
@@ -636,11 +687,11 @@ RESULT TABLE CSS
         min-width: 35px;
         max-width: 35px;
 
-        text-align: center !important;
-
         font-size: 11px;
 
         font-weight: 700;
+
+        text-align: center !important;
 
         background-color: #f8f9fa;
 
@@ -658,14 +709,25 @@ RESULT TABLE CSS
         min-width: 100px;
         max-width: 100px;
 
-        text-align: center !important;
-
         font-size: 11px;
 
     }
 
 
+    .student-header {
+
+        text-align: center !important;
+
+        font-weight: 600;
+
+        background-color: #f8f9fa;
+
+    }
+
+
     .student-name {
+
+        text-align: center !important;
 
         font-weight: 600;
 
@@ -680,6 +742,7 @@ RESULT TABLE CSS
 
     /* =========================================
        SUBJECT HEADER
+       Vertical subject names
     ========================================== */
 
     .subject-header {
@@ -690,7 +753,7 @@ RESULT TABLE CSS
 
         height: 100px;
 
-        padding: 3px !important;
+        padding: 3px 2px !important;
 
         writing-mode: vertical-rl;
 
@@ -721,13 +784,21 @@ RESULT TABLE CSS
         min-width: 35px;
         max-width: 35px;
 
-        height: 32px;
+        height: 20px;
 
         padding: 1px !important;
 
         font-size: 11px;
 
+        line-height: 1;
+
+        font-weight: 500;
+
         text-align: center !important;
+
+        vertical-align: middle !important;
+
+        background-color: #ffffff;
 
     }
 
@@ -751,21 +822,25 @@ RESULT TABLE CSS
         min-width: 55px;
         max-width: 55px;
 
-        height: 32px;
+        height: 20px;
 
         padding: 1px !important;
 
         font-size: 11px;
 
+        line-height: 1;
+
         font-weight: 600;
 
         text-align: center !important;
+
+        vertical-align: middle !important;
 
     }
 
 
     /* =========================================
-       SUMMARY
+       OVERALL HEADERS
     ========================================== */
 
     .overall-header {
@@ -778,10 +853,16 @@ RESULT TABLE CSS
 
         font-weight: 600;
 
+        text-align: center !important;
+
         background-color: #f8f9fa;
 
     }
 
+
+    /* =========================================
+       SUMMARY
+    ========================================== */
 
     .summary-cell {
 
@@ -793,6 +874,8 @@ RESULT TABLE CSS
 
         font-size: 10px;
 
+        line-height: 1.1;
+
         text-align: center !important;
 
         vertical-align: middle !important;
@@ -800,7 +883,13 @@ RESULT TABLE CSS
     }
 
 
+    /* =========================================
+       GRADE
+    ========================================== */
+
     .grade-cell {
+
+        font-size: 11px;
 
         font-weight: 700;
 
@@ -826,7 +915,7 @@ RESULT TABLE CSS
 
         font-size: 8px;
 
-        padding: 3px 4px !important;
+        padding: 2px 4px !important;
 
         border-radius: 3px;
 
@@ -853,6 +942,8 @@ RESULT TABLE CSS
             min-width: 85px;
             max-width: 85px;
 
+            font-size: 10px;
+
         }
 
 
@@ -875,7 +966,7 @@ RESULT TABLE CSS
             min-width: 32px;
             max-width: 32px;
 
-            height: 30px;
+            height: 20px;
 
             font-size: 10px;
 
@@ -888,6 +979,8 @@ RESULT TABLE CSS
             width: 32px;
             min-width: 32px;
             max-width: 32px;
+
+            font-size: 10px;
 
         }
 
@@ -904,8 +997,14 @@ RESULT TABLE CSS
 
         }
 
-    }
 
+        .result-table tbody tr {
+
+            height: 20px;
+
+        }
+
+    }
 </style>
 
 @endsection

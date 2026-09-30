@@ -404,7 +404,6 @@
 
 </div>
 
-
 {{-- =========================
      Subject Distribution
 ========================== --}}
@@ -431,7 +430,7 @@
                 </h3>
 
                 <p>
-                    Subjects assigned to each class
+                    Subjects and assigned teachers for each class
                 </p>
 
             </div>
@@ -450,11 +449,31 @@
 
             @php
 
-                $groupedAssignments = $assignments->groupBy(
-                    function ($assignment) {
+                /*
+                |--------------------------------------------------------------------------
+                | Group assignments by class
+                |--------------------------------------------------------------------------
+                */
+
+                $groupedAssignments = $assignments
+                    ->groupBy(function ($assignment) {
                         return $assignment->schoolClass->id;
-                    }
-                );
+                    })
+                    ->sortBy(function ($classAssignments) {
+
+                        $class = $classAssignments->first()->schoolClass;
+
+                        preg_match(
+                            '/\d+/',
+                            $class->name,
+                            $matches
+                        );
+
+                        return isset($matches[0])
+                            ? (int) $matches[0]
+                            : 999;
+
+                    });
 
             @endphp
 
@@ -463,9 +482,16 @@
 
                 @php
 
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Current Class
+                    |--------------------------------------------------------------------------
+                    */
+
                     $class = $classAssignments
                         ->first()
                         ->schoolClass;
+
 
                     preg_match(
                         '/\d+/',
@@ -473,15 +499,36 @@
                         $matches
                     );
 
-                    $gradeNumber =
-                        $matches[0] ?? '';
+                    $gradeNumber = $matches[0] ?? '';
+
+
+                    /*
+                    |--------------------------------------------------------------------------
+                    | Sort subjects alphabetically
+                    |--------------------------------------------------------------------------
+                    */
+
+                    $classAssignments = $classAssignments
+                        ->sortBy(function ($assignment) {
+
+                            return strtolower(
+                                $assignment->subject->name ?? ''
+                            );
+
+                        });
 
                 @endphp
 
 
+                {{-- =========================
+                     Class Row
+                ========================== --}}
+
                 <div class="grade-row">
 
+
                     {{-- Grade Information --}}
+
                     <div class="grade-info">
 
                         <div class="grade-icon">
@@ -496,6 +543,7 @@
                             }}
 
                         </div>
+
 
                         <div>
 
@@ -513,13 +561,19 @@
 
 
                     {{-- Subjects --}}
+
                     <div class="subjects-container">
 
                         @foreach ($classAssignments as $assignment)
 
                             <div class="subject-item">
 
+                                {{-- Subject Icon --}}
+
                                 <i class="bi bi-book"></i>
+
+
+                                {{-- Subject Information --}}
 
                                 <div>
 
@@ -529,6 +583,25 @@
 
                                     <small>
                                         {{ $assignment->subject->code }}
+                                    </small>
+
+
+                                    {{-- Teacher --}}
+
+                                    <small class="d-block mt-1">
+
+                                        <i class="bi bi-person-workspace me-1"></i>
+
+                                        @if ($assignment->teacher)
+
+                                            {{ $assignment->teacher->name }}
+
+                                        @else
+
+                                            No teacher assigned
+
+                                        @endif
+
                                     </small>
 
                                 </div>
@@ -544,9 +617,13 @@
 
             @empty
 
+                {{-- No Assignments --}}
+
                 <div class="text-center text-muted py-5">
 
-                    <i class="bi bi-journal-x fs-2 d-block mb-2"></i>
+                    <i
+                        class="bi bi-journal-x fs-2 d-block mb-2">
+                    </i>
 
                     No subjects assigned to any class.
 
@@ -559,6 +636,8 @@
     </div>
 
 </div>
+
+
 
 
 </div>

@@ -6,38 +6,38 @@
 
 <div class="container-fluid mt-4 px-4">
 
-{{-- Page Header --}}
-<div class="d-flex justify-content-between align-items-center mb-4">
+    {{-- Page Header --}}
+    <div class="d-flex justify-content-between align-items-center mb-4">
 
-    <div>
-        <h1 class="mb-1">Marks</h1>
+        <div>
+            <h1 class="mb-1">Marks</h1>
 
-        <div class="text-muted">
-            {{ $schoolClass->name }}
+            <div class="text-muted">
+                {{ $schoolClass->name }}
 
-            @if ($schoolClass->section)
+                @if ($schoolClass->section)
                 - {{ $schoolClass->section }}
-            @endif
+                @endif
 
-            |
-            {{ $subject->name }}
+                |
+                {{ $subject->name }}
+            </div>
         </div>
+
+        <a href="{{ url('/classes') }}"
+            class="btn btn-secondary">
+
+            <i class="bi bi-arrow-left me-1"></i>
+            Back
+
+        </a>
+
     </div>
 
-    <a href="{{ url('/classes') }}"
-       class="btn btn-secondary">
-
-        <i class="bi bi-arrow-left me-1"></i>
-        Back
-
-    </a>
-
-</div>
 
 
-
-{{-- Validation Errors --}}
-@if ($errors->any())
+    {{-- Validation Errors --}}
+    @if ($errors->any())
 
     <div class="alert alert-danger">
 
@@ -45,9 +45,9 @@
 
             @foreach ($errors->all() as $error)
 
-                <li>
-                    {{ $error }}
-                </li>
+            <li>
+                {{ $error }}
+            </li>
 
             @endforeach
 
@@ -55,181 +55,177 @@
 
     </div>
 
-@endif
+    @endif
 
 
-{{-- Marks Card --}}
-<div class="card shadow-sm">
+    {{-- Marks Card --}}
+    <div class="card shadow-sm">
 
-    <div class="card-body">
+        <div class="card-body">
 
-        <form
-            id="marksForm"
-            method="POST"
-            action="{{ route('marks.store', [
+            <form
+                id="marksForm"
+                method="POST"
+                action="{{ route('marks.store', [
                 'schoolClass' => $schoolClass->id,
                 'subject' => $subject->id,
-            ]) }}"
-        >
+            ]) }}">
 
-            @csrf
+                @csrf
 
 
-            {{-- Teacher --}}
-            @php
+                {{-- Teacher --}}
+                @php
 
                 $selectedTeacherId = old(
-                    'teacher_id',
-                    $students->first()?->marks
-                        ->first()?->teacher_id
+                'teacher_id',
+                $students->first()?->marks
+                ->first()?->teacher_id
                 );
 
-            @endphp
+                @endphp
 
 
-            <div class="row mb-4">
+                <div class="row mb-4">
 
-                <div class="col-md-4">
+                    <div class="col-md-4">
 
-                    <label class="form-label">
-                        Teacher
-                    </label>
+                        <label class="form-label">
+                            Teacher
+                        </label>
 
-                    <select
-                        name="teacher_id"
-                        class="form-select"
-                        required
-                    >
+                        <select
+                            name="teacher_id"
+                            class="form-select"
+                            required>
 
-                        <option value="">
-                            Select Teacher
-                        </option>
+                            <option value="">
+                                Select Teacher
+                            </option>
 
-                        @foreach ($teachers as $teacher)
+                            @foreach ($teachers as $teacher)
 
                             <option
                                 value="{{ $teacher->id }}"
-                                {{ $selectedTeacherId == $teacher->id ? 'selected' : '' }}
-                            >
+                                {{ $selectedTeacherId == $teacher->id ? 'selected' : '' }}>
 
                                 {{ $teacher->first_name }}
                                 {{ $teacher->last_name }}
 
                             </option>
 
-                        @endforeach
+                            @endforeach
 
-                    </select>
+                        </select>
+
+                    </div>
 
                 </div>
 
-            </div>
+
+                {{-- Marks Table --}}
+                <div class="table-responsive">
+
+                    <table class="table table-bordered align-middle text-nowrap marks-table">
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th style="width: 70px;">
+                                    No
+                                </th>
+
+                                <th>
+                                    Student
+                                </th>
+
+                                <th>
+                                    Midterm
+                                    <small class="text-muted">
+                                        / 40
+                                    </small>
+                                </th>
+
+                                <th>
+                                    Annual
+                                    <small class="text-muted">
+                                        / 60
+                                    </small>
+                                </th>
+
+                                <th>
+                                    Total
+                                    <small class="text-muted">
+                                        / 100
+                                    </small>
+                                </th>
+
+                                <th>
+                                    Grade
+                                </th>
+
+                                <th>
+                                    Result
+                                </th>
+
+                            </tr>
+
+                        </thead>
 
 
-            {{-- Marks Table --}}
-            <div class="table-responsive">
+                        <tbody>
 
-                <table class="table table-bordered align-middle">
-
-                    <thead class="table-light">
-
-                        <tr>
-
-                            <th style="width: 70px;">
-                                No
-                            </th>
-
-                            <th>
-                                Student
-                            </th>
-
-                            <th>
-                                Midterm
-                                <small class="text-muted">
-                                    / 40
-                                </small>
-                            </th>
-
-                            <th>
-                                Annual
-                                <small class="text-muted">
-                                    / 60
-                                </small>
-                            </th>
-
-                            <th>
-                                Total
-                                <small class="text-muted">
-                                    / 100
-                                </small>
-                            </th>
-
-                            <th>
-                                Grade
-                            </th>
-
-                            <th>
-                                Result
-                            </th>
-
-                        </tr>
-
-                    </thead>
-
-
-                    <tbody>
-
-                        @forelse ($students as $student)
+                            @forelse ($students as $student)
 
                             @php
 
-                                $midtermMark = $student->marks
-                                    ->firstWhere(
-                                        'exam.type',
-                                        'midterm'
-                                    )
-                                    ?->marks;
+                            $midtermMark = $student->marks
+                            ->firstWhere(
+                            'exam.type',
+                            'midterm'
+                            )
+                            ?->marks;
 
-                                $annualMark = $student->marks
-                                    ->firstWhere(
-                                        'exam.type',
-                                        'annual'
-                                    )
-                                    ?->marks;
+                            $annualMark = $student->marks
+                            ->firstWhere(
+                            'exam.type',
+                            'annual'
+                            )
+                            ?->marks;
 
-                                $totalMark =
-                                    ($midtermMark ?? 0)
-                                    +
-                                    ($annualMark ?? 0);
+                            $totalMark =
+                            ($midtermMark ?? 0)
+                            +
+                            ($annualMark ?? 0);
 
-                                $hasMarks =
-                                    $midtermMark !== null ||
-                                    $annualMark !== null;
+                            $hasMarks =
+                            $midtermMark !== null ||
+                            $annualMark !== null;
 
-                                $grade = null;
-                                $result = null;
+                            $grade = null;
+                            $result = null;
 
-                                if ($hasMarks) {
+                            if ($hasMarks) {
 
-                                    if ($totalMark >= 90) {
-                                        $grade = 'A';
-                                    } elseif ($totalMark >= 80) {
-                                        $grade = 'B';
-                                    } elseif ($totalMark >= 70) {
-                                        $grade = 'C';
-                                    } elseif ($totalMark >= 60) {
-                                        $grade = 'D';
-                                    } elseif ($totalMark >= 50) {
-                                        $grade = 'E';
-                                    } else {
-                                        $grade = 'F';
-                                    }
+                            if ($totalMark >= 90) {
+                            $grade = 'A';
+                            } elseif ($totalMark >= 80) {
+                            $grade = 'B';
+                            } elseif ($totalMark >= 70) {
+                            $grade = 'C';
+                            } elseif ($totalMark >= 60) {
+                            $grade = 'D';
+                            } elseif ($totalMark >= 50) {
+                            $grade = 'E';
+                            } else {
+                            $grade = 'F';
+                            }
 
-                                    $result =
-                                        $totalMark >= 40
-                                            ? 'Pass'
-                                            : 'Fail';
-                                }
+                            $result =
+                            $totalMark >= 40
+                            ? 'Pass'
+                            : 'Fail';
+                            }
 
                             @endphp
 
@@ -263,8 +259,7 @@
                                         value="{{ old(
                                             'marks.' . $student->id . '.midterm',
                                             $midtermMark
-                                        ) }}"
-                                    >
+                                        ) }}">
 
                                     <div class="text-danger small mt-1 midterm-error"></div>
 
@@ -285,8 +280,7 @@
                                         value="{{ old(
                                             'marks.' . $student->id . '.annual',
                                             $annualMark
-                                        ) }}"
-                                    >
+                                        ) }}">
 
                                     <div class="text-danger small mt-1 annual-error"></div>
 
@@ -301,8 +295,7 @@
                                         class="form-control total-mark"
                                         value="{{ $hasMarks ? $totalMark : '' }}"
                                         placeholder="—"
-                                        readonly
-                                    >
+                                        readonly>
 
                                 </td>
 
@@ -315,8 +308,7 @@
                                         class="form-control grade-mark"
                                         value="{{ $grade ?? '' }}"
                                         placeholder="—"
-                                        readonly
-                                    >
+                                        readonly>
 
                                 </td>
 
@@ -329,22 +321,20 @@
                                         class="form-control result-mark"
                                         value="{{ $result ?? '' }}"
                                         placeholder="—"
-                                        readonly
-                                    >
+                                        readonly>
 
                                 </td>
 
                             </tr>
 
 
-                        @empty
+                            @empty
 
                             <tr>
 
                                 <td
                                     colspan="7"
-                                    class="text-center text-muted py-4"
-                                >
+                                    class="text-center text-muted py-4">
 
                                     No students found.
 
@@ -352,34 +342,33 @@
 
                             </tr>
 
-                        @endforelse
+                            @endforelse
 
-                    </tbody>
+                        </tbody>
 
-                </table>
+                    </table>
 
-            </div>
+                </div>
 
 
-            {{-- Pagination --}}
-            @if ($students->hasPages())
+                {{-- Pagination --}}
+                @if ($students->hasPages())
 
                 <div class="mt-3">
                     {{ $students->links() }}
                 </div>
 
-            @endif
+                @endif
 
 
-            {{-- Save Button --}}
-            @if ($students->count() > 0)
+                {{-- Save Button --}}
+                @if ($students->count() > 0)
 
                 <div class="text-end mt-3">
 
                     <button
                         type="submit"
-                        class="btn btn-primary"
-                    >
+                        class="btn btn-primary">
 
                         <i class="bi bi-save me-1"></i>
                         Save Marks
@@ -388,13 +377,13 @@
 
                 </div>
 
-            @endif
+                @endif
 
-        </form>
+            </form>
+
+        </div>
 
     </div>
-
-</div>
 
 
 </div>
@@ -402,84 +391,91 @@
 {{-- Total, Grade, Result and Input Validation --}}
 
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
 
-document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('marksForm');
 
-    const form = document.getElementById('marksForm');
-
-    const rows = document.querySelectorAll('tbody tr');
-
-
-    rows.forEach(function (row) {
-
-        const midtermInput =
-            row.querySelector('.midterm-mark');
-
-        const annualInput =
-            row.querySelector('.annual-mark');
-
-        const totalInput =
-            row.querySelector('.total-mark');
-
-        const gradeInput =
-            row.querySelector('.grade-mark');
-
-        const resultInput =
-            row.querySelector('.result-mark');
-
-        const midtermError =
-            row.querySelector('.midterm-error');
-
-        const annualError =
-            row.querySelector('.annual-error');
+        const rows = document.querySelectorAll('tbody tr');
 
 
-        if (
-            !midtermInput ||
-            !annualInput ||
-            !totalInput ||
-            !gradeInput ||
-            !resultInput
-        ) {
-            return;
-        }
+        rows.forEach(function(row) {
+
+            const midtermInput =
+                row.querySelector('.midterm-mark');
+
+            const annualInput =
+                row.querySelector('.annual-mark');
+
+            const totalInput =
+                row.querySelector('.total-mark');
+
+            const gradeInput =
+                row.querySelector('.grade-mark');
+
+            const resultInput =
+                row.querySelector('.result-mark');
+
+            const midtermError =
+                row.querySelector('.midterm-error');
+
+            const annualError =
+                row.querySelector('.annual-error');
 
 
-        function validateMarks() {
+            if (
+                !midtermInput ||
+                !annualInput ||
+                !totalInput ||
+                !gradeInput ||
+                !resultInput
+            ) {
+                return;
+            }
 
-            let hasError = false;
+
+            function validateMarks() {
+
+                let hasError = false;
 
 
-            /* =========================
-               Midterm
-            ========================= */
+                /* =========================
+                   Midterm
+                ========================= */
 
-            if (midtermInput.value !== '') {
+                if (midtermInput.value !== '') {
 
-                let value =
-                    Number(midtermInput.value);
+                    let value =
+                        Number(midtermInput.value);
 
-                if (value > 40) {
+                    if (value > 40) {
 
-                    midtermInput.value = 40;
+                        midtermInput.value = 40;
 
-                    midtermInput.classList.add('is-invalid');
+                        midtermInput.classList.add('is-invalid');
 
-                    midtermError.textContent =
-                        'Midterm marks must be between 0 - 40.';
+                        midtermError.textContent =
+                            'Midterm marks must be between 0 - 40.';
 
-                    hasError = true;
+                        hasError = true;
 
-                } else if (value < 0) {
+                    } else if (value < 0) {
 
-                    midtermInput.value = 0;
+                        midtermInput.value = 0;
 
-                    midtermInput.classList.add('is-invalid');
+                        midtermInput.classList.add('is-invalid');
 
-                    midtermError.textContent =
-                        'Midterm marks must be between 0 - 40.';
+                        midtermError.textContent =
+                            'Midterm marks must be between 0 - 40.';
 
-                    hasError = true;
+                        hasError = true;
+
+                    } else {
+
+                        midtermInput.classList.remove('is-invalid');
+
+                        midtermError.textContent = '';
+
+                    }
 
                 } else {
 
@@ -489,45 +485,45 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 }
 
-            } else {
 
-                midtermInput.classList.remove('is-invalid');
+                /* =========================
+                   Annual
+                ========================= */
 
-                midtermError.textContent = '';
+                if (annualInput.value !== '') {
 
-            }
+                    let value =
+                        Number(annualInput.value);
 
+                    if (value > 60) {
 
-            /* =========================
-               Annual
-            ========================= */
+                        annualInput.value = 60;
 
-            if (annualInput.value !== '') {
+                        annualInput.classList.add('is-invalid');
 
-                let value =
-                    Number(annualInput.value);
+                        annualError.textContent =
+                            'Annual marks must be between 0 - 60.';
 
-                if (value > 60) {
+                        hasError = true;
 
-                    annualInput.value = 60;
+                    } else if (value < 0) {
 
-                    annualInput.classList.add('is-invalid');
+                        annualInput.value = 0;
 
-                    annualError.textContent =
-                        'Annual marks must be between 0 - 60.';
+                        annualInput.classList.add('is-invalid');
 
-                    hasError = true;
+                        annualError.textContent =
+                            'Annual marks must be between 0 - 60.';
 
-                } else if (value < 0) {
+                        hasError = true;
 
-                    annualInput.value = 0;
+                    } else {
 
-                    annualInput.classList.add('is-invalid');
+                        annualInput.classList.remove('is-invalid');
 
-                    annualError.textContent =
-                        'Annual marks must be between 0 - 60.';
+                        annualError.textContent = '';
 
-                    hasError = true;
+                    }
 
                 } else {
 
@@ -537,179 +533,170 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 }
 
-            } else {
 
-                annualInput.classList.remove('is-invalid');
-
-                annualError.textContent = '';
+                return hasError;
 
             }
 
 
-            return hasError;
+            function calculateResult() {
 
-        }
-
-
-        function calculateResult() {
-
-            validateMarks();
+                validateMarks();
 
 
-            const midtermValue =
-                midtermInput.value.trim();
+                const midtermValue =
+                    midtermInput.value.trim();
 
-            const annualValue =
-                annualInput.value.trim();
-
-
-            if (
-                midtermValue === '' &&
-                annualValue === ''
-            ) {
-
-                totalInput.value = '';
-                gradeInput.value = '';
-                resultInput.value = '';
-
-                return;
-
-            }
+                const annualValue =
+                    annualInput.value.trim();
 
 
-            const midterm =
-                Number(midtermValue) || 0;
+                if (
+                    midtermValue === '' &&
+                    annualValue === ''
+                ) {
 
-            const annual =
-                Number(annualValue) || 0;
+                    totalInput.value = '';
+                    gradeInput.value = '';
+                    resultInput.value = '';
 
-
-            const total =
-                midterm + annual;
-
-
-            totalInput.value = total;
-
-
-            let grade = 'F';
-
-
-            if (total >= 90) {
-
-                grade = 'A';
-
-            } else if (total >= 80) {
-
-                grade = 'B';
-
-            } else if (total >= 70) {
-
-                grade = 'C';
-
-            } else if (total >= 60) {
-
-                grade = 'D';
-
-            } else if (total >= 50) {
-
-                grade = 'E';
-
-            }
-
-
-            gradeInput.value = grade;
-
-
-            resultInput.value =
-                total >= 40
-                    ? 'Pass'
-                    : 'Fail';
-
-        }
-
-
-        midtermInput.addEventListener(
-            'input',
-            calculateResult
-        );
-
-        annualInput.addEventListener(
-            'input',
-            calculateResult
-        );
-
-
-        calculateResult();
-
-    });
-
-
-    /* =========================
-       Prevent Submit on Invalid Marks
-    ========================= */
-
-    if (form) {
-
-        form.addEventListener('submit', function (event) {
-
-            let hasError = false;
-
-
-            rows.forEach(function (row) {
-
-                const midtermInput =
-                    row.querySelector('.midterm-mark');
-
-                const annualInput =
-                    row.querySelector('.annual-mark');
-
-
-                if (!midtermInput || !annualInput) {
                     return;
+
                 }
 
 
                 const midterm =
-                    Number(midtermInput.value);
+                    Number(midtermValue) || 0;
 
                 const annual =
-                    Number(annualInput.value);
+                    Number(annualValue) || 0;
 
 
-                if (
-                    midtermInput.value !== '' &&
-                    (midterm < 0 || midterm > 40)
-                ) {
+                const total =
+                    midterm + annual;
 
-                    hasError = true;
+
+                totalInput.value = total;
+
+
+                let grade = 'F';
+
+
+                if (total >= 90) {
+
+                    grade = 'A';
+
+                } else if (total >= 80) {
+
+                    grade = 'B';
+
+                } else if (total >= 70) {
+
+                    grade = 'C';
+
+                } else if (total >= 60) {
+
+                    grade = 'D';
+
+                } else if (total >= 50) {
+
+                    grade = 'E';
 
                 }
 
 
-                if (
-                    annualInput.value !== '' &&
-                    (annual < 0 || annual > 60)
-                ) {
+                gradeInput.value = grade;
 
-                    hasError = true;
+
+                resultInput.value =
+                    total >= 40 ?
+                    'Pass' :
+                    'Fail';
+
+            }
+
+
+            midtermInput.addEventListener(
+                'input',
+                calculateResult
+            );
+
+            annualInput.addEventListener(
+                'input',
+                calculateResult
+            );
+
+
+            calculateResult();
+
+        });
+
+
+        /* =========================
+           Prevent Submit on Invalid Marks
+        ========================= */
+
+        if (form) {
+
+            form.addEventListener('submit', function(event) {
+
+                let hasError = false;
+
+
+                rows.forEach(function(row) {
+
+                    const midtermInput =
+                        row.querySelector('.midterm-mark');
+
+                    const annualInput =
+                        row.querySelector('.annual-mark');
+
+
+                    if (!midtermInput || !annualInput) {
+                        return;
+                    }
+
+
+                    const midterm =
+                        Number(midtermInput.value);
+
+                    const annual =
+                        Number(annualInput.value);
+
+
+                    if (
+                        midtermInput.value !== '' &&
+                        (midterm < 0 || midterm > 40)
+                    ) {
+
+                        hasError = true;
+
+                    }
+
+
+                    if (
+                        annualInput.value !== '' &&
+                        (annual < 0 || annual > 60)
+                    ) {
+
+                        hasError = true;
+
+                    }
+
+                });
+
+
+                if (hasError) {
+
+                    event.preventDefault();
 
                 }
 
             });
 
+        }
 
-            if (hasError) {
-
-                event.preventDefault();
-
-            }
-
-        });
-
-    }
-
-});
-
+    });
 </script>
 
 @endsection
