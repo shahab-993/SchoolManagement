@@ -6,35 +6,32 @@
 
 <div class="container-fluid mt-4 px-3">
 
-    ```
     {{-- =========================================
-     PAGE HEADER
-========================================== --}}
+         PAGE HEADER
+    ========================================== --}}
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="result-page-header mb-4">
 
         <div>
-
-            <h1 class="mb-1">
+            <h1 class="result-page-title mb-1">
                 Result Report
             </h1>
 
-            <div class="text-muted small">
+            <div class="result-class-info">
+                <i class="bi bi-mortarboard-fill me-1"></i>
 
                 {{ $schoolClass->name }}
 
                 @if ($schoolClass->section)
-                - {{ $schoolClass->section }}
+                    <span class="mx-1">•</span>
+                    Section {{ $schoolClass->section }}
                 @endif
-
             </div>
-
         </div>
-
 
         <a
             href="{{ route('classes.index') }}"
-            class="btn btn-secondary btn-sm">
+            class="btn btn-secondary btn-sm result-back-btn">
 
             <i class="bi bi-arrow-left me-1"></i>
             Back
@@ -45,68 +42,93 @@
 
 
     {{-- =========================================
-     RESULT CARD
-========================================== --}}
+         RESULT CARD
+    ========================================== --}}
 
-    <div class="card shadow-sm border-0">
+    <div class="card result-card border-0">
 
-        <div class="card-body p-2">
+        {{-- CARD HEADER --}}
 
-            <div class="table-responsive">
+        <div class="result-card-header">
+
+            <div>
+                <h5 class="mb-1">
+                    <i class="bi bi-bar-chart-fill me-2"></i>
+                    Student Results
+                </h5>
+
+                <div class="result-card-subtitle">
+                    Academic performance overview
+                </div>
+            </div>
+
+            <div class="student-count">
+
+                <i class="bi bi-people-fill me-1"></i>
+
+                {{ $students->total() }}
+
+                Students
+
+            </div>
+
+        </div>
+
+
+        {{-- TABLE --}}
+
+        <div class="card-body p-0">
+
+            <div class="table-responsive result-table-wrapper">
 
                 <table class="table result-table mb-0">
 
                     {{-- =========================================
-                     TABLE HEADER
-                ========================================== --}}
+                         TABLE HEADER
+                    ========================================== --}}
 
                     <thead>
 
                         <tr>
 
-                            {{-- No --}}
                             <th class="number-header">
                                 No
                             </th>
 
-
-                            {{-- Student --}}
                             <th class="student-header">
                                 Student
                             </th>
 
 
-                            {{-- Subjects --}}
+                            {{-- SUBJECTS --}}
+
                             @foreach ($subjects as $subject)
 
-                            <th class="subject-header">
-                                {{ $subject->name }}
-                            </th>
+                                <th class="subject-header">
+                                    {{ $subject->name }}
+                                </th>
 
                             @endforeach
 
 
-                            {{-- Total --}}
                             <th class="overall-header">
                                 Total
                             </th>
 
-
-                            {{-- Percentage --}}
                             <th class="overall-header">
                                 %
                             </th>
 
-
-                            {{-- Grade --}}
                             <th class="overall-header">
                                 Grade
                             </th>
 
-
-                            {{-- Result --}}
-                            <th class="overall-header">
+                            <th class="overall-header result-header">
                                 Result
+                            </th>
+
+                            <th class="action-header">
+                                Action
                             </th>
 
                         </tr>
@@ -115,481 +137,617 @@
 
 
                     {{-- =========================================
-                     TABLE BODY
-                ========================================== --}}
+                         TABLE BODY
+                    ========================================== --}}
 
                     <tbody>
 
                         @forelse ($results as $result)
 
-                        @php
-
-                        $subjectResults = collect(
-                        $result['subjects']
-                        )->values();
-
-
-                        /*
-                        |--------------------------------------------------------------------------
-                        | Exam 1
-                        |--------------------------------------------------------------------------
-                        */
-
-                        $overallMidterm = 0;
-
-                        $midtermMaximum = 0;
-
-
-                        /*
-                        |--------------------------------------------------------------------------
-                        | Exam 2
-                        |--------------------------------------------------------------------------
-                        */
-
-                        $overallAnnual = 0;
-
-                        $annualMaximum = 0;
-
-
-                        /*
-                        |--------------------------------------------------------------------------
-                        | Total
-                        |--------------------------------------------------------------------------
-                        */
-
-                        $overallTotal = 0;
-
-
-                        foreach ($subjectResults as $studentSubject) {
-
-                        $midterm =
-                        $studentSubject['midterm']
-                        ?? null;
-
-                        $annual =
-                        $studentSubject['annual']
-                        ?? null;
-
-
-                        /*
-                        |--------------------------------------------------------------------------
-                        | First Exam
-                        |--------------------------------------------------------------------------
-                        */
-
-                        if (
-                        $midterm !== null &&
-                        $midterm !== ''
-                        ) {
-
-                        $overallMidterm +=
-                        (float) $midterm;
-
-                        $midtermMaximum += 40;
-
-                        }
-
-
-                        /*
-                        |--------------------------------------------------------------------------
-                        | Second Exam
-                        |--------------------------------------------------------------------------
-                        */
-
-                        if (
-                        $annual !== null &&
-                        $annual !== ''
-                        ) {
-
-                        $overallAnnual +=
-                        (float) $annual;
-
-                        $annualMaximum += 60;
-
-                        }
-
-
-                        /*
-                        |--------------------------------------------------------------------------
-                        | Subject Total
-                        |--------------------------------------------------------------------------
-                        */
-
-                        if (
-                        (
-                        $midterm !== null &&
-                        $midterm !== ''
-                        )
-                        ||
-                        (
-                        $annual !== null &&
-                        $annual !== ''
-                        )
-                        ) {
-
-                        $subjectTotal = 0;
-
-
-                        if (
-                        $midterm !== null &&
-                        $midterm !== ''
-                        ) {
-
-                        $subjectTotal +=
-                        (float) $midterm;
-
-                        }
-
-
-                        if (
-                        $annual !== null &&
-                        $annual !== ''
-                        ) {
-
-                        $subjectTotal +=
-                        (float) $annual;
-
-                        }
-
-
-                        $overallTotal +=
-                        $subjectTotal;
-
-                        }
-
-                        }
-
-
-                        /*
-                        |--------------------------------------------------------------------------
-                        | First Exam Percentage
-                        |--------------------------------------------------------------------------
-                        */
-
-                        $midtermPercentage = null;
-
-
-                        if ($midtermMaximum > 0) {
-
-                        $midtermPercentage = round(
-                        (
-                        $overallMidterm /
-                        $midtermMaximum
-                        ) * 100,
-                        2
-                        );
-
-                        }
-
-
-                        /*
-                        |--------------------------------------------------------------------------
-                        | Second Exam Percentage
-                        |--------------------------------------------------------------------------
-                        */
-
-                        $annualPercentage = null;
-
-
-                        if ($annualMaximum > 0) {
-
-                        $annualPercentage = round(
-                        (
-                        $overallAnnual /
-                        $annualMaximum
-                        ) * 100,
-                        2
-                        );
-
-                        }
-
-                        @endphp
-
-
-                        {{-- ==================================================
-                             ROW 1 - FIRST EXAM
-                        =================================================== --}}
-
-                        <tr>
-
-                            {{-- No --}}
-                            <td
-                                rowspan="3"
-                                class="student-number">
-
-                                {{ $loop->iteration }}
-
-                            </td>
-
-
-                            {{-- Student --}}
-                            <td
-                                rowspan="3"
-                                class="student-name">
-
-                                {{ $result['student']->first_name }}
-
-                                {{ $result['student']->last_name }}
-
-                            </td>
-
-
-                            {{-- Subject First Exam --}}
-                            @foreach ($subjectResults as $studentSubject)
-
                             @php
 
-                            $midterm =
-                            $studentSubject['midterm']
-                            ?? null;
+                                $subjectResults = collect(
+                                    $result['subjects']
+                                )->values();
+
+
+                                /*
+                                |--------------------------------------------------------------------------
+                                | MIDTERM
+                                |--------------------------------------------------------------------------
+                                */
+
+                                $overallMidterm = 0;
+
+                                $midtermMaximum = 0;
+
+
+                                /*
+                                |--------------------------------------------------------------------------
+                                | ANNUAL
+                                |--------------------------------------------------------------------------
+                                */
+
+                                $overallAnnual = 0;
+
+                                $annualMaximum = 0;
+
+
+                                /*
+                                |--------------------------------------------------------------------------
+                                | TOTAL
+                                |--------------------------------------------------------------------------
+                                */
+
+                                $overallTotal = 0;
+
+
+                                foreach ($subjectResults as $studentSubject) {
+
+                                    $midterm =
+                                        $studentSubject['midterm']
+                                        ?? null;
+
+                                    $annual =
+                                        $studentSubject['annual']
+                                        ?? null;
+
+
+                                    /*
+                                    |--------------------------------------------------------------------------
+                                    | MIDTERM
+                                    |--------------------------------------------------------------------------
+                                    */
+
+                                    if (
+                                        $midterm !== null &&
+                                        $midterm !== ''
+                                    ) {
+
+                                        $overallMidterm +=
+                                            (float) $midterm;
+
+                                        $midtermMaximum += 40;
+
+                                    }
+
+
+                                    /*
+                                    |--------------------------------------------------------------------------
+                                    | ANNUAL
+                                    |--------------------------------------------------------------------------
+                                    */
+
+                                    if (
+                                        $annual !== null &&
+                                        $annual !== ''
+                                    ) {
+
+                                        $overallAnnual +=
+                                            (float) $annual;
+
+                                        $annualMaximum += 60;
+
+                                    }
+
+
+                                    /*
+                                    |--------------------------------------------------------------------------
+                                    | SUBJECT TOTAL
+                                    |--------------------------------------------------------------------------
+                                    */
+
+                                    if (
+                                        (
+                                            $midterm !== null &&
+                                            $midterm !== ''
+                                        )
+                                        ||
+                                        (
+                                            $annual !== null &&
+                                            $annual !== ''
+                                        )
+                                    ) {
+
+                                        $subjectTotal = 0;
+
+
+                                        if (
+                                            $midterm !== null &&
+                                            $midterm !== ''
+                                        ) {
+
+                                            $subjectTotal +=
+                                                (float) $midterm;
+
+                                        }
+
+
+                                        if (
+                                            $annual !== null &&
+                                            $annual !== ''
+                                        ) {
+
+                                            $subjectTotal +=
+                                                (float) $annual;
+
+                                        }
+
+
+                                        $overallTotal +=
+                                            $subjectTotal;
+
+                                    }
+
+                                }
+
+
+                                /*
+                                |--------------------------------------------------------------------------
+                                | MIDTERM PERCENTAGE
+                                |--------------------------------------------------------------------------
+                                */
+
+                                $midtermPercentage = null;
+
+
+                                if ($midtermMaximum > 0) {
+
+                                    $midtermPercentage = round(
+                                        (
+                                            $overallMidterm /
+                                            $midtermMaximum
+                                        ) * 100,
+                                        2
+                                    );
+
+                                }
+
+
+                                /*
+                                |--------------------------------------------------------------------------
+                                | ANNUAL PERCENTAGE
+                                |--------------------------------------------------------------------------
+                                */
+
+                                $annualPercentage = null;
+
+
+                                if ($annualMaximum > 0) {
+
+                                    $annualPercentage = round(
+                                        (
+                                            $overallAnnual /
+                                            $annualMaximum
+                                        ) * 100,
+                                        2
+                                    );
+
+                                }
 
                             @endphp
 
 
-                            <td class="mark-cell">
+                            {{-- ==================================================
+                                 ROW 1 - MIDTERM
+                            =================================================== --}}
 
-                                @if (
-                                $midterm !== null &&
-                                $midterm !== ''
-                                )
+                            <tr class="student-first-row">
 
-                                {{ $midterm }}
+                                {{-- NUMBER --}}
 
-                                @endif
+                                <td
+                                    rowspan="3"
+                                    class="student-number">
 
-                            </td>
+                                    <div class="student-number-box">
+                                        {{ $loop->iteration }}
+                                    </div>
 
-                            @endforeach
+                                </td>
 
 
-                            {{-- First Exam Total --}}
-                            <td class="grand-total-cell">
+                                {{-- STUDENT --}}
 
-                                @if ($midtermMaximum > 0)
+                                <td
+                                    rowspan="3"
+                                    class="student-name">
 
-                                {{ $overallMidterm }}
+                                    <div class="student-name-wrapper">
 
-                                @endif
+                                        <div class="student-name-text">
 
-                            </td>
+                                            {{ $result['student']->first_name }}
 
+                                            {{ $result['student']->last_name }}
 
-                            {{-- First Exam Percentage --}}
-                            <td class="summary-cell">
+                                        </div>
 
-                                @if ($midtermPercentage !== null)
+                                        <div class="student-exam-label">
+                                            Midterm / Annual
+                                        </div>
 
-                                {{ $midtermPercentage }}%
+                                    </div>
 
-                                @endif
+                                </td>
 
-                            </td>
 
+                                {{-- SUBJECT MIDTERM --}}
 
-                            {{-- Grade --}}
-                            <td
-                                rowspan="3"
-                                class="summary-cell grade-cell">
+                                @foreach ($subjectResults as $studentSubject)
 
-                                {{ $result['grade'] ?? '' }}
+                                    @php
 
-                            </td>
+                                        $midterm =
+                                            $studentSubject['midterm']
+                                            ?? null;
 
+                                    @endphp
 
-                            {{-- Result --}}
-                            <td
-                                rowspan="3"
-                                class="summary-cell">
+                                    <td class="mark-cell midterm-cell">
 
-                                @if ($result['result'] === 'Pass')
+                                        @if (
+                                            $midterm !== null &&
+                                            $midterm !== ''
+                                        )
 
-                                <span class="badge bg-success">
-                                    Pass
-                                </span>
+                                            {{ $midterm }}
 
-                                @elseif ($result['result'] === 'Fail')
+                                        @else
 
-                                <span class="badge bg-danger">
-                                    Fail
-                                </span>
+                                            <span class="empty-mark">
+                                                -
+                                            </span>
 
-                                @endif
+                                        @endif
 
-                            </td>
+                                    </td>
 
-                        </tr>
+                                @endforeach
 
 
-                        {{-- ==================================================
-                             ROW 2 - SECOND EXAM
-                        =================================================== --}}
+                                {{-- MIDTERM TOTAL --}}
 
-                        <tr>
+                                <td class="grand-total-cell">
 
-                            {{-- Subject Second Exam --}}
-                            @foreach ($subjectResults as $studentSubject)
+                                    @if ($midtermMaximum > 0)
 
-                            @php
+                                        {{ $overallMidterm }}
 
-                            $annual =
-                            $studentSubject['annual']
-                            ?? null;
+                                    @else
 
-                            @endphp
+                                        <span class="empty-mark">
+                                            -
+                                        </span>
 
+                                    @endif
 
-                            <td class="mark-cell">
+                                </td>
 
-                                @if (
-                                $annual !== null &&
-                                $annual !== ''
-                                )
 
-                                {{ $annual }}
+                                {{-- MIDTERM PERCENTAGE --}}
 
-                                @endif
+                                <td class="summary-cell">
 
-                            </td>
+                                    @if ($midtermPercentage !== null)
 
-                            @endforeach
+                                        {{ $midtermPercentage }}%
 
+                                    @else
 
-                            {{-- Second Exam Total --}}
-                            <td class="grand-total-cell">
+                                        <span class="empty-mark">
+                                            -
+                                        </span>
 
-                                @if ($annualMaximum > 0)
+                                    @endif
 
-                                {{ $overallAnnual }}
+                                </td>
 
-                                @endif
 
-                            </td>
+                                {{-- GRADE --}}
 
+                                <td
+                                    rowspan="3"
+                                    class="summary-cell grade-cell">
 
-                            {{-- Second Exam Percentage --}}
-                            <td class="summary-cell">
+                                    @if ($result['grade'])
 
-                                @if ($annualPercentage !== null)
+                                        <span class="grade-badge">
+                                            {{ $result['grade'] }}
+                                        </span>
 
-                                {{ $annualPercentage }}%
+                                    @else
 
-                                @endif
+                                        <span class="empty-mark">
+                                            -
+                                        </span>
 
-                            </td>
+                                    @endif
 
-                        </tr>
+                                </td>
 
 
-                        {{-- ==================================================
-                             ROW 3 - TOTAL
-                        =================================================== --}}
+                                {{-- RESULT --}}
 
-                        <tr class="student-end">
+                                <td
+                                    rowspan="3"
+                                    class="summary-cell">
 
-                            {{-- Subject Total --}}
-                            @foreach ($subjectResults as $studentSubject)
+                                    @if ($result['result'] === 'Pass')
 
-                            @php
+                                        <span class="result-badge result-pass">
+                                            <i class="bi bi-check-circle-fill me-1"></i>
+                                            Pass
+                                        </span>
 
-                            $midterm =
-                            $studentSubject['midterm']
-                            ?? null;
+                                    @elseif ($result['result'] === 'Fail')
 
-                            $annual =
-                            $studentSubject['annual']
-                            ?? null;
+                                        <span class="result-badge result-fail">
+                                            <i class="bi bi-x-circle-fill me-1"></i>
+                                            Fail
+                                        </span>
 
+                                    @else
 
-                            $hasMidterm =
-                            $midterm !== null &&
-                            $midterm !== '';
+                                        <span class="empty-mark">
+                                            -
+                                        </span>
 
-                            $hasAnnual =
-                            $annual !== null &&
-                            $annual !== '';
+                                    @endif
 
+                                </td>
 
-                            $hasAnyMark =
-                            $hasMidterm ||
-                            $hasAnnual;
 
+                                {{-- ACTION --}}
 
-                            $subjectTotal = 0;
+                                <td
+                                    rowspan="3"
+                                    class="action-cell">
 
+                                    @if (
+                                        auth()->user()->hasPermission(
+                                            'print_results'
+                                        )
+                                    )
 
-                            if ($hasMidterm) {
+                                        <a
+                                            href="{{ route('results.pdf', [
+                                                'schoolClass' => $schoolClass->id,
+                                                'student' => $result['student']->id,
+                                            ]) }}"
+                                            target="_blank"
+                                            class="print-result-btn"
+                                            title="Print Student Result">
 
-                            $subjectTotal +=
-                            (float) $midterm;
+                                            <i class="bi bi-file-earmark-pdf-fill"></i>
 
-                            }
+                                            <span>
+                                                Print PDF
+                                            </span>
 
+                                        </a>
 
-                            if ($hasAnnual) {
+                                    @endif
 
-                            $subjectTotal +=
-                            (float) $annual;
+                                </td>
 
-                            }
+                            </tr>
 
-                            @endphp
 
+                            {{-- ==================================================
+                                 ROW 2 - ANNUAL
+                            =================================================== --}}
 
-                            <td class="mark-cell total-cell">
+                            <tr class="student-second-row">
 
-                                @if ($hasAnyMark)
+                                @foreach ($subjectResults as $studentSubject)
 
-                                {{ $subjectTotal }}
+                                    @php
 
-                                @endif
+                                        $annual =
+                                            $studentSubject['annual']
+                                            ?? null;
 
-                            </td>
+                                    @endphp
 
-                            @endforeach
+                                    <td class="mark-cell annual-cell">
 
+                                        @if (
+                                            $annual !== null &&
+                                            $annual !== ''
+                                        )
 
-                            {{-- Grand Total --}}
-                            <td class="grand-total-cell total-cell">
+                                            {{ $annual }}
 
-                                @if ($midtermMaximum > 0 || $annualMaximum > 0)
+                                        @else
 
-                                {{ $overallTotal }}
+                                            <span class="empty-mark">
+                                                -
+                                            </span>
 
-                                @endif
+                                        @endif
 
-                            </td>
+                                    </td>
 
+                                @endforeach
 
-                            {{-- Total Percentage --}}
-                            <td class="summary-cell">
 
-                                @if ($result['percentage'] !== null)
+                                {{-- ANNUAL TOTAL --}}
 
-                                {{ $result['percentage'] }}%
+                                <td class="grand-total-cell">
 
-                                @endif
+                                    @if ($annualMaximum > 0)
 
-                            </td>
+                                        {{ $overallAnnual }}
 
-                        </tr>
+                                    @else
+
+                                        <span class="empty-mark">
+                                            -
+                                        </span>
+
+                                    @endif
+
+                                </td>
+
+
+                                {{-- ANNUAL PERCENTAGE --}}
+
+                                <td class="summary-cell">
+
+                                    @if ($annualPercentage !== null)
+
+                                        {{ $annualPercentage }}%
+
+                                    @else
+
+                                        <span class="empty-mark">
+                                            -
+                                        </span>
+
+                                    @endif
+
+                                </td>
+
+                            </tr>
+
+
+                            {{-- ==================================================
+                                 ROW 3 - TOTAL
+                            =================================================== --}}
+
+                            <tr class="student-end">
+
+                                @foreach ($subjectResults as $studentSubject)
+
+                                    @php
+
+                                        $midterm =
+                                            $studentSubject['midterm']
+                                            ?? null;
+
+                                        $annual =
+                                            $studentSubject['annual']
+                                            ?? null;
+
+
+                                        $hasMidterm =
+                                            $midterm !== null &&
+                                            $midterm !== '';
+
+
+                                        $hasAnnual =
+                                            $annual !== null &&
+                                            $annual !== '';
+
+
+                                        $hasAnyMark =
+                                            $hasMidterm ||
+                                            $hasAnnual;
+
+
+                                        $subjectTotal = 0;
+
+
+                                        if ($hasMidterm) {
+
+                                            $subjectTotal +=
+                                                (float) $midterm;
+
+                                        }
+
+
+                                        if ($hasAnnual) {
+
+                                            $subjectTotal +=
+                                                (float) $annual;
+
+                                        }
+
+                                    @endphp
+
+
+                                    <td class="mark-cell total-cell">
+
+                                        @if ($hasAnyMark)
+
+                                            {{ $subjectTotal }}
+
+                                        @else
+
+                                            <span class="empty-mark">
+                                                -
+                                            </span>
+
+                                        @endif
+
+                                    </td>
+
+                                @endforeach
+
+
+                                {{-- GRAND TOTAL --}}
+
+                                <td class="grand-total-cell total-cell">
+
+                                    @if (
+                                        $midtermMaximum > 0 ||
+                                        $annualMaximum > 0
+                                    )
+
+                                        {{ $overallTotal }}
+
+                                    @else
+
+                                        <span class="empty-mark">
+                                            -
+                                        </span>
+
+                                    @endif
+
+                                </td>
+
+
+                                {{-- TOTAL PERCENTAGE --}}
+
+                                <td class="summary-cell total-percentage">
+
+                                    @if ($result['percentage'] !== null)
+
+                                        {{ $result['percentage'] }}%
+
+                                    @else
+
+                                        <span class="empty-mark">
+                                            -
+                                        </span>
+
+                                    @endif
+
+                                </td>
+
+                            </tr>
 
 
                         @empty
 
-                        <tr>
+                            <tr>
 
-                            <td
-                                colspan="{{ 6 + $subjects->count() }}"
-                                class="text-center text-muted py-5">
+                                <td
+                                    colspan="{{ 7 + $subjects->count() }}"
+                                    class="empty-results">
 
-                                <i
-                                    class="bi bi-journal-x fs-3 d-block mb-2"></i>
+                                    <i
+                                        class="bi bi-journal-x">
+                                    </i>
 
-                                No students found.
+                                    <div>
+                                        No students found.
+                                    </div>
 
-                            </td>
+                                </td>
 
-                        </tr>
+                            </tr>
 
                         @endforelse
 
@@ -601,52 +759,198 @@
 
 
             {{-- =========================================
-             PAGINATION
-        ========================================== --}}
+                 PAGINATION
+            ========================================== --}}
 
             @if ($students->hasPages())
 
-            <div class="d-flex justify-content-between align-items-center mt-3">
+                <div class="pagination-wrapper">
 
-                <div class="text-muted small">
+                    <div class="text-muted small">
 
-                    Showing
-                    {{ $students->firstItem() }}
-                    to
-                    {{ $students->lastItem() }}
-                    of
-                    {{ $students->total() }}
-                    students
+                        Showing
+                        <strong>{{ $students->firstItem() }}</strong>
+                        to
+                        <strong>{{ $students->lastItem() }}</strong>
+                        of
+                        <strong>{{ $students->total() }}</strong>
+                        students
+
+                    </div>
+
+                    <div>
+                        {{ $students->links() }}
+                    </div>
 
                 </div>
-
-
-                <div>
-
-                    {{ $students->links() }}
-
-                </div>
-
-            </div>
 
             @endif
 
         </div>
 
     </div>
-    ```
 
 </div>
 
-{{-- =========================================
-RESULT TABLE CSS
-========================================== --}}
+
+{{-- =========================================================
+     RESULT PAGE CSS
+========================================================= --}}
 
 <style>
+
+    /* =========================================
+       PAGE HEADER
+    ========================================== */
+
+    .result-page-header {
+
+        display: flex;
+
+        justify-content: space-between;
+
+        align-items: center;
+
+        padding: 18px 20px;
+
+        background: #ffffff;
+
+        border: 1px solid #e9ecef;
+
+        border-radius: 10px;
+
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+
+    }
+
+
+    .result-page-title {
+
+        font-size: 24px;
+
+        font-weight: 700;
+
+        color: #263b52;
+
+    }
+
+
+    .result-class-info {
+
+        color: #6c757d;
+
+        font-size: 13px;
+
+    }
+
+
+    .result-back-btn {
+
+        border-radius: 6px;
+
+        padding: 6px 12px;
+
+    }
+
+
+    /* =========================================
+       RESULT CARD
+    ========================================== */
+
+    .result-card {
+
+        border-radius: 10px;
+
+        overflow: hidden;
+
+        box-shadow: 0 4px 18px rgba(0, 0, 0, 0.06);
+
+    }
+
+
+    .result-card-header {
+
+        display: flex;
+
+        justify-content: space-between;
+
+        align-items: center;
+
+        padding: 15px 18px;
+
+        background: #f8f9fa;
+
+        border-bottom: 1px solid #dee2e6;
+
+    }
+
+
+    .result-card-header h5 {
+
+        color: #263b52;
+
+        font-weight: 700;
+
+        margin: 0;
+
+        font-size: 16px;
+
+    }
+
+
+    .result-card-subtitle {
+
+        font-size: 11px;
+
+        color: #6c757d;
+
+    }
+
+
+    .student-count {
+
+        font-size: 12px;
+
+        color: #6c757d;
+
+        background: #ffffff;
+
+        border: 1px solid #dee2e6;
+
+        padding: 5px 9px;
+
+        border-radius: 6px;
+
+    }
+
+
+    /* =========================================
+       TABLE WRAPPER
+    ========================================== */
+
+    .result-table-wrapper {
+
+        width: 100%;
+
+        overflow-x: auto;
+
+        overflow-y: hidden;
+
+    }
+
+
+    /* =========================================
+       TABLE
+    ========================================== */
+
     .result-table {
 
         width: 100%;
+
+        min-width: 900px;
+
         border-collapse: collapse;
+
         border-spacing: 0;
 
         table-layout: fixed;
@@ -655,23 +959,38 @@ RESULT TABLE CSS
 
         font-size: 12px;
 
+        margin: 0;
+
     }
 
-
-    /* =========================================
-       ALL CELLS
-    ========================================== */
 
     .result-table th,
     .result-table td {
 
-        border: 1px solid #adb5bd !important;
+        border: 1px solid #d9dee3 !important;
 
-        padding: 2px !important;
+        padding: 3px !important;
 
         text-align: center;
 
         vertical-align: middle !important;
+
+    }
+
+
+    /* =========================================
+       TABLE HEADER
+    ========================================== */
+
+    .result-table thead th {
+
+        background: #263b52;
+
+        color: #ffffff;
+
+        font-weight: 600;
+
+        border-color: #263b52 !important;
 
     }
 
@@ -683,17 +1002,52 @@ RESULT TABLE CSS
     .number-header,
     .student-number {
 
-        width: 35px;
-        min-width: 35px;
-        max-width: 35px;
+        width: 42px;
+
+        min-width: 42px;
+
+        max-width: 42px;
+
+    }
+
+
+    .number-header {
+
+        font-size: 11px;
+
+    }
+
+
+    .student-number {
+
+        background: #f8fafc;
+
+    }
+
+
+    .student-number-box {
+
+        width: 25px;
+
+        height: 25px;
+
+        margin: auto;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        background: #e9eef3;
+
+        color: #263b52;
+
+        border-radius: 50%;
 
         font-size: 11px;
 
         font-weight: 700;
-
-        text-align: center !important;
-
-        background-color: #f8f9fa;
 
     }
 
@@ -705,31 +1059,43 @@ RESULT TABLE CSS
     .student-header,
     .student-name {
 
-        width: 100px;
-        min-width: 100px;
-        max-width: 100px;
+        width: 125px;
 
-        font-size: 11px;
+        min-width: 125px;
+
+        max-width: 125px;
 
     }
 
 
     .student-header {
 
-        text-align: center !important;
-
-        font-weight: 600;
-
-        background-color: #f8f9fa;
+        font-size: 11px;
 
     }
 
 
     .student-name {
 
-        text-align: center !important;
+        background: #f8fafc;
 
-        font-weight: 600;
+    }
+
+
+    .student-name-wrapper {
+
+        padding: 2px 4px;
+
+    }
+
+
+    .student-name-text {
+
+        font-size: 11px;
+
+        font-weight: 700;
+
+        color: #263b52;
 
         overflow: hidden;
 
@@ -740,18 +1106,34 @@ RESULT TABLE CSS
     }
 
 
+    .student-exam-label {
+
+        margin-top: 3px;
+
+        font-size: 8px;
+
+        color: #8a949e;
+
+        text-transform: uppercase;
+
+        letter-spacing: .3px;
+
+    }
+
+
     /* =========================================
-       SUBJECT HEADER
-       Vertical subject names
+       SUBJECT HEADERS
     ========================================== */
 
     .subject-header {
 
-        width: 35px;
-        min-width: 35px;
-        max-width: 35px;
+        width: 38px;
 
-        height: 100px;
+        min-width: 38px;
+
+        max-width: 38px;
+
+        height: 105px;
 
         padding: 3px 2px !important;
 
@@ -765,11 +1147,9 @@ RESULT TABLE CSS
 
         white-space: nowrap;
 
-        font-size: 10px;
+        font-size: 9px;
 
         font-weight: 600;
-
-        background-color: #f1f3f5;
 
     }
 
@@ -780,38 +1160,72 @@ RESULT TABLE CSS
 
     .mark-cell {
 
-        width: 35px;
-        min-width: 35px;
-        max-width: 35px;
+        width: 38px;
 
-        height: 20px;
+        min-width: 38px;
 
-        padding: 1px !important;
+        max-width: 38px;
+
+        height: 22px;
+
+        padding: 2px !important;
 
         font-size: 11px;
 
         line-height: 1;
 
-        font-weight: 500;
-
         text-align: center !important;
 
         vertical-align: middle !important;
 
-        background-color: #ffffff;
+    }
+
+
+    .midterm-cell {
+
+        background: #ffffff;
+
+    }
+
+
+    .annual-cell {
+
+        background: #f8fafc;
+
+    }
+
+
+    .total-cell {
+
+        background: #eef2f5;
+
+        font-weight: 700;
+
+        color: #263b52;
+
+    }
+
+
+    .empty-mark {
+
+        color: #adb5bd;
 
     }
 
 
     /* =========================================
-       TOTAL
+       OVERALL COLUMNS
     ========================================== */
 
-    .total-cell {
+    .overall-header {
 
-        font-weight: 700;
+        width: 55px;
 
-        background-color: #f8f9fa;
+        min-width: 55px;
+
+        max-width: 55px;
+
+        font-size: 10px;
 
     }
 
@@ -819,66 +1233,36 @@ RESULT TABLE CSS
     .grand-total-cell {
 
         width: 55px;
+
         min-width: 55px;
+
         max-width: 55px;
 
-        height: 20px;
-
-        padding: 1px !important;
-
-        font-size: 11px;
-
-        line-height: 1;
-
         font-weight: 600;
 
-        text-align: center !important;
-
-        vertical-align: middle !important;
+        color: #263b52;
 
     }
 
-
-    /* =========================================
-       OVERALL HEADERS
-    ========================================== */
-
-    .overall-header {
-
-        width: 50px;
-        min-width: 50px;
-        max-width: 50px;
-
-        font-size: 10px;
-
-        font-weight: 600;
-
-        text-align: center !important;
-
-        background-color: #f8f9fa;
-
-    }
-
-
-    /* =========================================
-       SUMMARY
-    ========================================== */
 
     .summary-cell {
 
-        width: 50px;
-        min-width: 50px;
-        max-width: 50px;
+        width: 55px;
 
-        padding: 2px !important;
+        min-width: 55px;
+
+        max-width: 55px;
 
         font-size: 10px;
 
-        line-height: 1.1;
+    }
 
-        text-align: center !important;
 
-        vertical-align: middle !important;
+    .total-percentage {
+
+        font-weight: 700;
+
+        color: #263b52;
 
     }
 
@@ -889,7 +1273,30 @@ RESULT TABLE CSS
 
     .grade-cell {
 
-        font-size: 11px;
+        font-size: 12px;
+
+        font-weight: 700;
+
+    }
+
+
+    .grade-badge {
+
+        display: inline-flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        width: 28px;
+
+        height: 28px;
+
+        border-radius: 50%;
+
+        background: #e8eef4;
+
+        color: #263b52;
 
         font-weight: 700;
 
@@ -897,27 +1304,214 @@ RESULT TABLE CSS
 
 
     /* =========================================
-       STUDENT SEPARATOR
+       RESULT
     ========================================== */
 
-    .student-end td {
+    .result-header {
 
-        border-bottom: 3px solid #6c757d !important;
+        width: 65px;
+
+        min-width: 65px;
+
+        max-width: 65px;
+
+    }
+
+
+    .result-badge {
+
+        display: inline-flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        padding: 4px 7px;
+
+        border-radius: 5px;
+
+        font-size: 9px;
+
+        font-weight: 600;
+
+        white-space: nowrap;
+
+    }
+
+
+    .result-pass {
+
+        background: #e8f5ee;
+
+        color: #198754;
+
+    }
+
+
+    .result-fail {
+
+        background: #fdebec;
+
+        color: #dc3545;
 
     }
 
 
     /* =========================================
-       RESULT BADGE
+       ACTION
     ========================================== */
 
-    .result-table .badge {
+    .action-header {
 
-        font-size: 8px;
+        width: 90px;
 
-        padding: 2px 4px !important;
+        min-width: 90px;
 
-        border-radius: 3px;
+        max-width: 90px;
+
+        font-size: 10px;
+
+    }
+
+
+    .action-cell {
+
+        width: 90px;
+
+        min-width: 90px;
+
+        max-width: 90px;
+
+        background: #ffffff;
+
+    }
+
+
+    .print-result-btn {
+
+        display: inline-flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        gap: 4px;
+
+        padding: 5px 7px;
+
+        border-radius: 5px;
+
+        background: #3d5f7e;
+
+        color: #ffffff;
+
+        border: 1px solid #263b52;
+
+        text-decoration: none;
+
+        font-size: 9px;
+
+        font-weight: 500;
+
+        white-space: nowrap;
+
+        transition: all .2s ease;
+
+    }
+
+
+    .print-result-btn:hover {
+
+        background: #344d68;
+
+        border-color: #344d68;
+
+        color: #ffffff;
+
+        transform: translateY(-1px);
+
+    }
+
+
+    .print-result-btn i {
+
+        font-size: 11px;
+
+    }
+
+
+    /* =========================================
+       STUDENT ROWS
+    ========================================== */
+
+    .student-first-row td {
+
+        border-top: 2px solid #adb5bd !important;
+
+    }
+
+
+    .student-second-row td {
+
+        border-top: 0 !important;
+
+        border-bottom: 0 !important;
+
+    }
+
+
+    .student-end td {
+
+        border-bottom: 3px solid #adb5bd !important;
+
+    }
+
+
+    /* =========================================
+       EMPTY STATE
+    ========================================== */
+
+    .empty-results {
+
+        padding: 50px 20px !important;
+
+        color: #6c757d;
+
+        font-size: 14px;
+
+    }
+
+
+    .empty-results i {
+
+        display: block;
+
+        font-size: 35px;
+
+        margin-bottom: 10px;
+
+        color: #adb5bd;
+
+    }
+
+
+    /* =========================================
+       PAGINATION
+    ========================================== */
+
+    .pagination-wrapper {
+
+        display: flex;
+
+        justify-content: space-between;
+
+        align-items: center;
+
+        padding: 15px 18px;
+
+        border-top: 1px solid #e9ecef;
+
+        background: #ffffff;
 
     }
 
@@ -928,7 +1522,46 @@ RESULT TABLE CSS
 
     @media (max-width: 768px) {
 
+        .result-page-header {
+
+            padding: 13px;
+
+        }
+
+
+        .result-page-title {
+
+            font-size: 20px;
+
+        }
+
+
+        .result-class-info {
+
+            font-size: 11px;
+
+        }
+
+
+        .result-card-header {
+
+            padding: 12px;
+
+        }
+
+
+        .student-count {
+
+            font-size: 10px;
+
+            padding: 4px 6px;
+
+        }
+
+
         .result-table {
+
+            min-width: 850px;
 
             font-size: 10px;
 
@@ -938,9 +1571,16 @@ RESULT TABLE CSS
         .student-header,
         .student-name {
 
-            width: 85px;
-            min-width: 85px;
-            max-width: 85px;
+            width: 100px;
+
+            min-width: 100px;
+
+            max-width: 100px;
+
+        }
+
+
+        .student-name-text {
 
             font-size: 10px;
 
@@ -950,12 +1590,14 @@ RESULT TABLE CSS
         .subject-header {
 
             width: 32px;
+
             min-width: 32px;
+
             max-width: 32px;
 
             height: 95px;
 
-            font-size: 9px;
+            font-size: 8px;
 
         }
 
@@ -963,12 +1605,14 @@ RESULT TABLE CSS
         .mark-cell {
 
             width: 32px;
+
             min-width: 32px;
+
             max-width: 32px;
 
             height: 20px;
 
-            font-size: 10px;
+            font-size: 9px;
 
         }
 
@@ -976,11 +1620,11 @@ RESULT TABLE CSS
         .number-header,
         .student-number {
 
-            width: 32px;
-            min-width: 32px;
-            max-width: 32px;
+            width: 35px;
 
-            font-size: 10px;
+            min-width: 35px;
+
+            max-width: 35px;
 
         }
 
@@ -990,7 +1634,9 @@ RESULT TABLE CSS
         .summary-cell {
 
             width: 45px;
+
             min-width: 45px;
+
             max-width: 45px;
 
             font-size: 9px;
@@ -998,13 +1644,66 @@ RESULT TABLE CSS
         }
 
 
-        .result-table tbody tr {
+        .action-header,
+        .action-cell {
 
-            height: 20px;
+            width: 55px;
+
+            min-width: 55px;
+
+            max-width: 55px;
+
+        }
+
+
+        .print-result-btn {
+
+            width: 30px;
+
+            height: 27px;
+
+            padding: 3px;
+
+        }
+
+
+        .print-result-btn span {
+
+            display: none;
+
+        }
+
+
+        .print-result-btn i {
+
+            font-size: 13px;
+
+        }
+
+
+        .grade-badge {
+
+            width: 24px;
+
+            height: 24px;
+
+            font-size: 10px;
+
+        }
+
+
+        .pagination-wrapper {
+
+            flex-direction: column;
+
+            gap: 10px;
+
+            align-items: flex-start;
 
         }
 
     }
+
 </style>
 
 @endsection

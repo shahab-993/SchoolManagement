@@ -281,6 +281,19 @@ Route::middleware('auth')->group(function () {
     )
         ->name('results.index')
         ->middleware('permission:view_results');
+    Route::get(
+        '/classes/{schoolClass}/students/{student}/result/pdf',
+        [ResultController::class, 'pdf']
+    )
+        ->name('results.pdf')
+        ->middleware('permission:print_results');
+        Route::get(
+    '/classes/{schoolClass}/results/pdf',
+    [ResultController::class, 'classPdf']
+)
+    ->name('results.class-pdf')
+    ->middleware('permission:print_results');
+
 
 
     // Display Users
@@ -312,9 +325,15 @@ Route::middleware('auth')->group(function () {
     Route::delete('/users/{user}', [UserController::class, 'destroy'])
         ->name('users.destroy')
         ->middleware('permission:delete_users');
-
 });
 
+
+Route::get(
+    '/classes/{schoolClass}/students/{student}/result/pdf',
+    [ResultController::class, 'pdf']
+)
+    ->name('results.pdf')
+    ->middleware('permission:print_results');
 
 /*
 |--------------------------------------------------------------------------
